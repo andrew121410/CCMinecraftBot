@@ -11,6 +11,7 @@ import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.net.Proxy;
 
@@ -26,6 +27,10 @@ public class Main {
     @Getter
     private CommandMan commandManager;
 
+    @Getter
+    @Setter
+    private CCPlayer ccPlayer;
+
     private static final ProxyInfo PROXY = null;
     private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
 
@@ -39,7 +44,7 @@ public class Main {
         setupMinecraftBot();
     }
 
-    private void setupMinecraftBot() {
+    public void setupMinecraftBot() {
         MinecraftProtocol protocol;
         try {
             protocol = new MinecraftProtocol(config.getMinecraftUsername(), config.getMinecraftPassword());
