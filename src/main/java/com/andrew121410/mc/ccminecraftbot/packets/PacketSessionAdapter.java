@@ -14,6 +14,9 @@ import lombok.SneakyThrows;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PacketSessionAdapter extends SessionAdapter {
 
@@ -69,7 +72,17 @@ public class PacketSessionAdapter extends SessionAdapter {
         System.out.println("Disconnected: " + event.getReason());
         if (event.getCause() != null) {
             event.getCause().printStackTrace();
+            return;
         }
+        if (event.getReason().contains("ban")) {
+            return;
+        }
+        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(() -> {
+            System.out.println("Trying to reconnect.");
+            main.setupMinecraftBot();
+            executorService.shutdown();
+        }, 1, 2, TimeUnit.MINUTES);
     }
 
     private void registerPackets() {
