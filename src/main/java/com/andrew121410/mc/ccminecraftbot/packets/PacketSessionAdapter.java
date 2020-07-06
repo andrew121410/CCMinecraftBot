@@ -32,7 +32,7 @@ public class PacketSessionAdapter extends SessionAdapter {
 
     @Override
     public void packetReceived(PacketReceivedEvent event) {
-        if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerMultiBlockChangePacket || event.getPacket() instanceof ServerBlockChangePacket) {
+        if (event.getPacket() instanceof ServerUpdateLightPacket) {
             return; //Not needed
         }
 
@@ -95,5 +95,8 @@ public class PacketSessionAdapter extends SessionAdapter {
         this.packets.put(ServerUnloadChunkPacket.class, new OnServerUnloadChunkPacket(this.main));
 
         this.packets.put(ServerChatPacket.class, new OnServerChatPacket(this.main));
+
+        this.packets.put(ServerBlockChangePacket.class, new OnServerBlockChangePacket(this.main));
+        this.packets.put(ServerMultiBlockChangePacket.class, new OnServerMultiBlockChangePacket(this.main));
     }
 }
