@@ -1,5 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot;
 
+import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
@@ -26,6 +27,8 @@ public class CCPlayer {
 
     private int maxPlayers;
 
+    private ChunkCache chunkCache;
+
     private String[] worldNames;
     private int worldCount;
     private String dimension;
@@ -48,6 +51,7 @@ public class CCPlayer {
         this.previousGameMode = serverJoinGamePacket.getPreviousGamemode();
         this.serverViewDistance = serverJoinGamePacket.getViewDistance();
         this.maxPlayers = serverJoinGamePacket.getMaxPlayers();
+        this.chunkCache = new ChunkCache(this.main);
         this.worldNames = serverJoinGamePacket.getWorldNames();
         this.worldCount = serverJoinGamePacket.getWorldCount();
         this.dimension = serverJoinGamePacket.getDimension();

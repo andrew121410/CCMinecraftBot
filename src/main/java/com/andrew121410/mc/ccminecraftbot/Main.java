@@ -29,7 +29,7 @@ public class Main {
 
     @Getter
     @Setter
-    private CCPlayer ccPlayer;
+    private CCPlayer player;
 
     private static final ProxyInfo PROXY = null;
     private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
@@ -40,7 +40,7 @@ public class Main {
 
     public Main(String[] args) {
         instance = this;
-        this.config = ConfigUtils.loadMainConfig();
+        this.config = ConfigUtils.loadConfig();
         setupMinecraftBot();
     }
 

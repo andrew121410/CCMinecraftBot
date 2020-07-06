@@ -1,60 +1,45 @@
 package com.andrew121410.mc.ccminecraftbot.packets;
 
-import com.andrew121410.mc.ccminecraftbot.CCPlayer;
 import com.andrew121410.mc.ccminecraftbot.Main;
-import com.github.steveice10.mc.protocol.data.game.ClientRequest;
-import com.github.steveice10.mc.protocol.packet.ingame.client.ClientRequestPacket;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.*;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateLightPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.*;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
 import com.github.steveice10.packetlib.event.session.*;
+import com.github.steveice10.packetlib.packet.Packet;
 import lombok.SneakyThrows;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PacketSessionAdapter extends SessionAdapter {
+
+    private Map<Class<? extends Packet>, PacketHandler<? extends Packet>> packets;
 
     private Main main;
 
     public PacketSessionAdapter(Main main) {
         this.main = main;
+        this.packets = new HashMap<>();
+        this.registerPackets();
     }
 
     @Override
     public void packetReceived(PacketReceivedEvent event) {
-        if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerChunkDataPacket || event.getPacket() instanceof ServerMultiBlockChangePacket || event.getPacket() instanceof ServerBlockChangePacket) {
+        if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerMultiBlockChangePacket || event.getPacket() instanceof ServerBlockChangePacket) {
             return; //Not needed
         }
 
-        //Login
-        if (event.getPacket() instanceof LoginSuccessPacket) {
-            LoginSuccessPacket loginSuccessPacket = event.getPacket();
-            this.main.setCcPlayer(new CCPlayer(this.main, loginSuccessPacket));
+        //Handles the packets.
+        if (this.packets.containsKey(event.getPacket().getClass())) {
+            this.packets.get(event.getPacket().getClass()).handle(event.getPacket());
             return;
-        } else if (event.getPacket() instanceof ServerJoinGamePacket) {
-            ServerJoinGamePacket serverJoinGamePacket = event.getPacket();
-            this.main.getCcPlayer().handleServerJoinGamePacket(serverJoinGamePacket);
-            return;
-        } else if (event.getPacket() instanceof ServerPlayerPositionRotationPacket) {
-            ServerPlayerPositionRotationPacket serverPlayerPositionRotationPacket = event.getPacket();
-            this.main.getCcPlayer().handleServerPlayerPositionRotationPacket(serverPlayerPositionRotationPacket);
         }
 
         System.out.println("RECEIVED: " + event.getPacket().toString());
-
-        if (event.getPacket() instanceof ServerPlayerHealthPacket) {
-            ServerPlayerHealthPacket serverPlayerHealthPacket = event.getPacket();
-            if (serverPlayerHealthPacket.getHealth() == 0.0) {
-                //Make the bot respawn on it's own.
-                ClientRequestPacket clientRequestPacket = new ClientRequestPacket(ClientRequest.RESPAWN);
-                event.getSession().send(clientRequestPacket);
-                System.out.println("Bot has respawn.");
-            }
-            return;
-        }
     }
 
     @Override
@@ -85,5 +70,17 @@ public class PacketSessionAdapter extends SessionAdapter {
         if (event.getCause() != null) {
             event.getCause().printStackTrace();
         }
+    }
+
+    private void registerPackets() {
+        this.packets.put(LoginSuccessPacket.class, new OnLoginSuccessPacket(this.main));
+        this.packets.put(ServerJoinGamePacket.class, new OnServerJoinGamePacket(this.main));
+        this.packets.put(ServerPlayerHealthPacket.class, new OnServerPlayerHealthPacket(this.main));
+        this.packets.put(ServerPlayerPositionRotationPacket.class, new OnServerPlayerPositionRotationPacket(this.main));
+        //Chunks
+        this.packets.put(ServerChunkDataPacket.class, new OnServerChunkDataPacket(this.main));
+        this.packets.put(ServerUnloadChunkPacket.class, new OnServerUnloadChunkPacket(this.main));
+
+        this.packets.put(ServerChatPacket.class, new OnServerChatPacket(this.main));
     }
 }

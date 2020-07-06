@@ -9,7 +9,7 @@ import java.io.File;
 public class ConfigUtils {
 
     @SneakyThrows
-    public static CCMinecraftBotJacksonConfig loadMainConfig() {
+    public static CCMinecraftBotJacksonConfig loadConfig() {
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         File configFolder = new File("config");
         File configFile = new File(configFolder, "config.yml");
