@@ -6,11 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.ClientRequest;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 public class OnServerPlayerHealthPacket extends PacketHandler<ServerPlayerHealthPacket> {
 
@@ -23,6 +19,8 @@ public class OnServerPlayerHealthPacket extends PacketHandler<ServerPlayerHealth
             ClientRequestPacket clientRequestPacket = new ClientRequestPacket(ClientRequest.RESPAWN);
             this.main.getClient().getSession().send(clientRequestPacket);
             System.out.println("Bot has respawn.");
+        } else if (packet.getFood() < 20) {
+
         }
     }
 }

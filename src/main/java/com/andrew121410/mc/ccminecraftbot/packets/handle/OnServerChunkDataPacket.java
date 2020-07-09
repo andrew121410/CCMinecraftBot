@@ -4,11 +4,7 @@ import com.andrew121410.mc.ccminecraftbot.Main;
 import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 public class OnServerChunkDataPacket extends PacketHandler<ServerChunkDataPacket> {
 
@@ -16,6 +12,9 @@ public class OnServerChunkDataPacket extends PacketHandler<ServerChunkDataPacket
 
     @Override
     public void handle(ServerChunkDataPacket packet) {
+        if (packet.getColumn().getBiomeData() == null)
+            return; //Not a full chunk.
+
         this.main.getPlayer().getChunkCache().addChunk(packet.getColumn());
     }
 }

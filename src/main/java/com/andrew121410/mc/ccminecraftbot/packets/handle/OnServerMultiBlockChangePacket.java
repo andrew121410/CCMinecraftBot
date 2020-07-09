@@ -5,11 +5,7 @@ import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 public class OnServerMultiBlockChangePacket extends PacketHandler<ServerMultiBlockChangePacket> {
 

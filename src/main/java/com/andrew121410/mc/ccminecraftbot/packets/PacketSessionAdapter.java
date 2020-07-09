@@ -2,10 +2,22 @@ package com.andrew121410.mc.ccminecraftbot.packets;
 
 import com.andrew121410.mc.ccminecraftbot.Main;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.*;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.OnServerPlayerChangeHeldItemPacket;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.OnServerSetSlotPacket;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.OnServerWindowItemsPacket;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnLoginSuccessPacket;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPlayerListEntryPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.*;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.*;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
 import com.github.steveice10.packetlib.event.session.*;
@@ -32,17 +44,18 @@ public class PacketSessionAdapter extends SessionAdapter {
 
     @Override
     public void packetReceived(PacketReceivedEvent event) {
-        if (event.getPacket() instanceof ServerUpdateLightPacket) {
+        if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerKeepAlivePacket || event.getPacket() instanceof ServerUpdateTimePacket) {
             return; //Not needed
         }
+
+        if (!(event.getPacket() instanceof ServerMultiBlockChangePacket || event.getPacket() instanceof ServerChunkDataPacket || event.getPacket() instanceof ServerEntityPositionPacket || event.getPacket() instanceof ServerEntityVelocityPacket || event.getPacket() instanceof ServerPlayerListEntryPacket || event.getPacket() instanceof ServerEntityPositionRotationPacket || event.getPacket() instanceof ServerEntityHeadLookPacket || event.getPacket() instanceof ServerEntityTeleportPacket))
+            System.out.println("RECEIVED: " + event.getPacket().toString());
 
         //Handles the packets.
         if (this.packets.containsKey(event.getPacket().getClass())) {
             this.packets.get(event.getPacket().getClass()).handle(event.getPacket());
             return;
         }
-
-        System.out.println("RECEIVED: " + event.getPacket().toString());
     }
 
     @Override
@@ -51,6 +64,9 @@ public class PacketSessionAdapter extends SessionAdapter {
 
     @Override
     public void packetSent(PacketSentEvent event) {
+        if (event.getPacket() instanceof ClientKeepAlivePacket) {
+            return; //Just spams the console.
+        }
         System.out.println("SENT: " + event.getPacket().toString());
     }
 
@@ -77,26 +93,35 @@ public class PacketSessionAdapter extends SessionAdapter {
         if (event.getReason().contains("ban")) {
             return;
         }
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> {
-            System.out.println("Trying to reconnect.");
-            main.setupMinecraftBot();
-            executorService.shutdown();
-        }, 1, 2, TimeUnit.MINUTES);
+
+        if (!this.main.isShuttingDown()) {
+            final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.scheduleAtFixedRate(() -> {
+                System.out.println("Trying to reconnect.");
+                main.setupMinecraftBot();
+                executorService.shutdown();
+            }, 1, 2, TimeUnit.MINUTES);
+        }
     }
 
     private void registerPackets() {
+        //Login
         this.packets.put(LoginSuccessPacket.class, new OnLoginSuccessPacket(this.main));
         this.packets.put(ServerJoinGamePacket.class, new OnServerJoinGamePacket(this.main));
+
         this.packets.put(ServerPlayerHealthPacket.class, new OnServerPlayerHealthPacket(this.main));
         this.packets.put(ServerPlayerPositionRotationPacket.class, new OnServerPlayerPositionRotationPacket(this.main));
+        this.packets.put(ServerChatPacket.class, new OnServerChatPacket(this.main));
+
         //Chunks
         this.packets.put(ServerChunkDataPacket.class, new OnServerChunkDataPacket(this.main));
         this.packets.put(ServerUnloadChunkPacket.class, new OnServerUnloadChunkPacket(this.main));
-
-        this.packets.put(ServerChatPacket.class, new OnServerChatPacket(this.main));
-
         this.packets.put(ServerBlockChangePacket.class, new OnServerBlockChangePacket(this.main));
         this.packets.put(ServerMultiBlockChangePacket.class, new OnServerMultiBlockChangePacket(this.main));
+
+        //Inv
+        this.packets.put(ServerPlayerChangeHeldItemPacket.class, new OnServerPlayerChangeHeldItemPacket(this.main));
+        this.packets.put(ServerSetSlotPacket.class, new OnServerSetSlotPacket(this.main));
+        this.packets.put(ServerWindowItemsPacket.class, new OnServerWindowItemsPacket(this.main));
     }
 }

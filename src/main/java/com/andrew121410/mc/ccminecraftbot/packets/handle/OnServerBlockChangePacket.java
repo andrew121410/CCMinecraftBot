@@ -4,11 +4,7 @@ import com.andrew121410.mc.ccminecraftbot.Main;
 import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 public class OnServerBlockChangePacket extends PacketHandler<ServerBlockChangePacket> {
 

@@ -71,9 +71,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.GeyserMC</groupId>
+            <groupId>com.github.Steveice10</groupId>
             <artifactId>MCProtocolLib</artifactId>
-            <version>feature~1.16-1.12.1-1-g10bb8e2-319</version>
+            <version>7545884a2d</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

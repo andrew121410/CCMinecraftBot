@@ -1,15 +1,11 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle;
+package com.andrew121410.mc.ccminecraftbot.packets.handle.login;
 
-import com.andrew121410.mc.ccminecraftbot.CCPlayer;
 import com.andrew121410.mc.ccminecraftbot.Main;
 import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
+import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 public class OnLoginSuccessPacket extends PacketHandler<LoginSuccessPacket> {
 

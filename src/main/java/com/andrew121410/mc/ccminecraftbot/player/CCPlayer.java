@@ -1,5 +1,9 @@
-package com.andrew121410.mc.ccminecraftbot;
+package com.andrew121410.mc.ccminecraftbot.player;
 
+import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.player.inventory.PlayerInventory;
+import com.andrew121410.mc.ccminecraftbot.world.Direction;
+import com.andrew121410.mc.ccminecraftbot.world.Location;
 import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -41,8 +45,12 @@ public class CCPlayer {
     private float yaw;
     private float pitch;
 
+    private PlayerInventory playerInventory;
+
     public CCPlayer(Main main, LoginSuccessPacket loginSuccessPacket) {
+        this.main = main;
         this.gameProfile = loginSuccessPacket.getProfile();
+        this.playerInventory = new PlayerInventory(this.main, this);
     }
 
     public void handleServerJoinGamePacket(ServerJoinGamePacket serverJoinGamePacket) {
@@ -67,4 +75,11 @@ public class CCPlayer {
         this.pitch = serverPlayerPositionRotationPacket.getPitch();
     }
 
+    public Location getLocation() {
+        return new Location(this.x, this.y, this.z, this.yaw, this.pitch);
+    }
+
+    public Direction getDirection() {
+        return Direction.getDirection(getLocation());
+    }
 }
