@@ -86,6 +86,10 @@ public class PlayerInventory {
     }
 
     public InventoryMessage moveSlotToCursor(int slot) {
+        if (isHotbarSlot(slot)) {
+            moveCursor(toHotbarSlotNumber(slot));
+            return InventoryMessage.SUCCESS;
+        }
         InventorySlot fromSlot = this.getItemStackMap().get(slot);
         if (fromSlot == null) return InventoryMessage.CANT_BECAUSE_NO_ITEM;
         ItemStack fromItem = fromSlot.getItemStack();
@@ -103,5 +107,34 @@ public class PlayerInventory {
         moveSlotToCursor(inventorySlot.getSlot());
         ClientPlayerUseItemPacket packet = new ClientPlayerUseItemPacket(Hand.MAIN_HAND);
         this.main.getClient().getSession().send(packet);
+    }
+
+    public Integer toHotbarSlotNumber(int slot) {
+        switch (slot) {
+            case 36:
+                return 0;
+            case 37:
+                return 1;
+            case 38:
+                return 2;
+            case 39:
+                return 3;
+            case 40:
+                return 4;
+            case 41:
+                return 5;
+            case 42:
+                return 6;
+            case 43:
+                return 7;
+            case 44:
+                return 8;
+            default:
+                return null;
+        }
+    }
+
+    public boolean isHotbarSlot(int slot) {
+        return toHotbarSlotNumber(slot) != null;
     }
 }

@@ -20,7 +20,7 @@ public class OnServerPlayerHealthPacket extends PacketHandler<ServerPlayerHealth
             this.main.getClient().getSession().send(clientRequestPacket);
             System.out.println("Bot has respawn.");
         } else if (packet.getFood() < 20) {
-
+            this.main.getPlayer().getPlayerInventory().findFoodAndEatIt();
         }
     }
 }
