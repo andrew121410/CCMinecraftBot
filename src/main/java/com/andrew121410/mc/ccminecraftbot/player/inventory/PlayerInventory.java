@@ -2,12 +2,16 @@ package com.andrew121410.mc.ccminecraftbot.player.inventory;
 
 import com.andrew121410.mc.ccminecraftbot.Main;
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
-import com.andrew121410.mc.ccminecraftbot.utils.Food;
+import com.andrew121410.mc.ccminecraftbot.utils.BlocksAndItems;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
+import com.github.steveice10.mc.protocol.data.game.window.DropItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerChangeHeldItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerUseItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientMoveItemToHotbarPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
@@ -39,6 +43,9 @@ public class PlayerInventory {
     @Getter
     private ItemStack cursor;
 
+    @Getter
+    private int actionId = 0;
+
     public PlayerInventory(Main main, CCPlayer ccPlayer) {
         this.main = main;
         this.ccPlayer = ccPlayer;
@@ -50,7 +57,8 @@ public class PlayerInventory {
             for (int i = 0; i < packet.getItems().length; i++) {
                 ItemStack itemStack = packet.getItems()[i];
                 if (itemStack == null) continue;
-                this.itemStackMap.putIfAbsent(i, new InventorySlot(i, itemStack));
+                this.itemStackMap.remove(i);
+                this.itemStackMap.put(i, new InventorySlot(i, toSlot(i), itemStack));
             }
         }
     }
@@ -63,7 +71,7 @@ public class PlayerInventory {
         } else if (packet.getWindowId() == 0) {
             this.itemStackMap.remove(packet.getSlot());
             if (packet.getItem() == null) return;
-            this.itemStackMap.put(packet.getSlot(), new InventorySlot(packet.getSlot(), packet.getItem()));
+            this.itemStackMap.put(packet.getSlot(), new InventorySlot(packet.getSlot(), toSlot(packet.getSlot()), packet.getItem()));
             return;
         }
     }
@@ -72,12 +80,8 @@ public class PlayerInventory {
         this.heldItemSlot = packet.getSlot();
     }
 
-    public InventorySlot findFood() {
-        return this.itemStackMap.values().stream().filter(inventorySlot -> Food.isFood(inventorySlot.getItemStack().getId())).findFirst().orElse(null);
-    }
-
     public void moveCursor(int to) {
-        ClientPlayerChangeHeldItemPacket packet = new ClientPlayerChangeHeldItemPacket(to);
+        ClientPlayerChangeHeldItemPacket packet = new ClientPlayerChangeHeldItemPacket(toSlot(to));
         this.main.getClient().getSession().send(packet);
         this.heldItemSlot = to;
         if (this.itemStackMap.containsKey(to))
@@ -87,7 +91,7 @@ public class PlayerInventory {
 
     public InventoryMessage moveSlotToCursor(int slot) {
         if (isHotbarSlot(slot)) {
-            moveCursor(toHotbarSlotNumber(slot));
+            moveCursor(slot);
             return InventoryMessage.SUCCESS;
         }
         InventorySlot fromSlot = this.getItemStackMap().get(slot);
@@ -98,7 +102,27 @@ public class PlayerInventory {
         this.cursor = fromItem;
         ClientMoveItemToHotbarPacket packet = new ClientMoveItemToHotbarPacket(slot);
         this.main.getClient().getSession().send(packet);
+        closeWindow(0);
         return InventoryMessage.SUCCESS;
+    }
+
+    public InventoryMessage dropFullStack(int slot) {
+        InventorySlot inventorySlot = this.itemStackMap.get(slot);
+        if (inventorySlot == null) return InventoryMessage.CANT_BECAUSE_NO_ITEM;
+        this.actionId++;
+        ClientWindowActionPacket packet = new ClientWindowActionPacket(0, this.actionId, inventorySlot.getRawSlot(), inventorySlot.getItemStack(), WindowAction.DROP_ITEM, DropItemParam.DROP_SELECTED_STACK);
+        this.main.getClient().getSession().send(packet);
+        closeWindow(0);
+        return InventoryMessage.SUCCESS;
+    }
+
+    public void closeWindow(int windowId) {
+        ClientCloseWindowPacket packet = new ClientCloseWindowPacket(windowId);
+        this.main.getClient().getSession().send(packet);
+    }
+
+    public InventorySlot findFood() {
+        return this.itemStackMap.values().stream().filter(inventorySlot -> BlocksAndItems.isFood(inventorySlot.getItemStack().getId())).findFirst().orElse(null);
     }
 
     public void findFoodAndEatIt() {
@@ -109,32 +133,36 @@ public class PlayerInventory {
         this.main.getClient().getSession().send(packet);
     }
 
-    public Integer toHotbarSlotNumber(int slot) {
-        switch (slot) {
-            case 36:
-                return 0;
-            case 37:
-                return 1;
-            case 38:
-                return 2;
-            case 39:
-                return 3;
-            case 40:
-                return 4;
-            case 41:
-                return 5;
-            case 42:
-                return 6;
-            case 43:
-                return 7;
-            case 44:
-                return 8;
-            default:
-                return null;
+    public int toSlot(int rawSlot) {
+        //HotBar
+        if (rawSlot >= 36 && rawSlot <= 44) {
+            return rawSlot - 36;
+            //Inventory
+        } else if (rawSlot >= 9 && rawSlot <= 35) {
+            return rawSlot;
+            //Armour
+        } else if (rawSlot >= 5 && rawSlot <= 8) {
+            switch (rawSlot) {
+                case 5:
+                    return 39;
+                case 6:
+                    return 38;
+                case 7:
+                    return 37;
+                case 8:
+                    return 36;
+            }
+            //Offhand.
+        } else if (rawSlot == 45) {
+            return 40;
+            //UI
+        } else if (rawSlot >= 1 && rawSlot <= 4 || rawSlot == 0) {
+            return rawSlot;
         }
+        return -1214;
     }
 
-    public boolean isHotbarSlot(int slot) {
-        return toHotbarSlotNumber(slot) != null;
+    public boolean isHotbarSlot(int unknownSlot) {
+        return unknownSlot >= 36 && unknownSlot <= 44;
     }
 }

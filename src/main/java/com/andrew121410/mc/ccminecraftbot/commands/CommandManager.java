@@ -31,7 +31,10 @@ public class CommandManager {
             return;
         } else if (command.equalsIgnoreCase("inv_find_food_and_eat_it")) {
             this.main.getPlayer().getPlayerInventory().findFoodAndEatIt();
-            sendMessage("trying.");
+            sendMessage("Trying.");
+        } else if (command.equalsIgnoreCase("inv_drop_a") && args.length == 1) {
+            this.main.getPlayer().getPlayerInventory().dropFullStack(Integer.parseInt(args[0]));
+            sendMessage("Dropping full stack in slot: " + args[0]);
         } else if (command.equalsIgnoreCase("ping")) {
             sendMessage("Hello I heard you.");
             return;

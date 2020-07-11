@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.utils;
 
-public class Food {
+public class BlocksAndItems {
 
     public static boolean isFood(int id) {
         switch (id) {

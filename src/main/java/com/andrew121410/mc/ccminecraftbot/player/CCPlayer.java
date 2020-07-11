@@ -7,6 +7,9 @@ import com.andrew121410.mc.ccminecraftbot.world.Location;
 import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerMovementPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
@@ -18,6 +21,8 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class CCPlayer {
+
+    public static boolean isReady = false;
 
     private Main main;
 
@@ -73,6 +78,26 @@ public class CCPlayer {
         this.z = serverPlayerPositionRotationPacket.getZ();
         this.yaw = serverPlayerPositionRotationPacket.getYaw();
         this.pitch = serverPlayerPositionRotationPacket.getPitch();
+        isReady = true;
+    }
+
+    public void sendPlayerMovementPacket() {
+        ClientPlayerMovementPacket packet = new ClientPlayerMovementPacket(true);
+        this.main.getClient().getSession().send(packet);
+    }
+
+    public void sendPlayerPositionPacket() {
+        ClientPlayerPositionPacket packet = new ClientPlayerPositionPacket(true, this.x, this.y, this.z);
+        this.main.getClient().getSession().send(packet);
+    }
+
+    public void sendPlayerPositionRotationPacket() {
+        ClientPlayerPositionRotationPacket packet = new ClientPlayerPositionRotationPacket(true, this.x, this.y, this.z, this.yaw, this.pitch);
+        this.main.getClient().getSession().send(packet);
+    }
+
+    public void tick() {
+        sendPlayerPositionPacket();
     }
 
     public Location getLocation() {

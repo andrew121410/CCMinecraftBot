@@ -2,9 +2,7 @@ package com.andrew121410.mc.ccminecraftbot.packets;
 
 import com.andrew121410.mc.ccminecraftbot.Main;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.*;
-import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.OnServerPlayerChangeHeldItemPacket;
-import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.OnServerSetSlotPacket;
-import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.OnServerWindowItemsPacket;
+import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.*;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnLoginSuccessPacket;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
@@ -16,6 +14,8 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.*;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerCloseWindowPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.*;
@@ -123,5 +123,7 @@ public class PacketSessionAdapter extends SessionAdapter {
         this.packets.put(ServerPlayerChangeHeldItemPacket.class, new OnServerPlayerChangeHeldItemPacket(this.main));
         this.packets.put(ServerSetSlotPacket.class, new OnServerSetSlotPacket(this.main));
         this.packets.put(ServerWindowItemsPacket.class, new OnServerWindowItemsPacket(this.main));
+        this.packets.put(ServerConfirmTransactionPacket.class, new OnServerConfirmTransactionPacket(this.main));
+        this.packets.put(ServerCloseWindowPacket.class, new OnServerCloseWindowPacket(this.main));
     }
 }

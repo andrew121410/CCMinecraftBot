@@ -12,11 +12,13 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class InventorySlot {
 
-    private ItemStack itemStack;
+    private int rawSlot;
     private int slot;
+    private ItemStack itemStack;
 
-    public InventorySlot(int slot, ItemStack itemStack) {
-        this.itemStack = itemStack;
+    public InventorySlot(int rawSlot, int slot, ItemStack itemStack) {
+        this.rawSlot = rawSlot;
         this.slot = slot;
+        this.itemStack = itemStack;
     }
 }

@@ -18,6 +18,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Proxy;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
@@ -26,6 +30,9 @@ public class Main {
 
     @Getter
     private boolean isShuttingDown = false;
+
+    @Getter
+    private ScheduledExecutorService scheduledExecutorService;
 
     @Getter
     private CCMinecraftBotJacksonConfig config;
@@ -67,6 +74,23 @@ public class Main {
         client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
         client.getSession().addListener(new PacketSessionAdapter(this));
         client.getSession().connect();
+        startMainTick();
+    }
+
+    public void startMainTick() {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+            atomicInteger.getAndIncrement();
+            if (atomicInteger.get() == 20 && CCPlayer.isReady) {
+                this.getPlayer().tick();
+                atomicInteger.set(0);
+            }
+
+            if (atomicInteger.get() >= 20) {
+                atomicInteger.set(0);
+            }
+        }, 0, 50, TimeUnit.MILLISECONDS); //0.05 seconds
     }
 
     private void setupScanner() {
@@ -93,6 +117,7 @@ public class Main {
     public void quit() {
         this.isShuttingDown = true;
         System.out.println("Shutting down.");
+        this.scheduledExecutorService.shutdown();
         this.client.getSession().disconnect("OkByes");
         System.exit(1);
     }
