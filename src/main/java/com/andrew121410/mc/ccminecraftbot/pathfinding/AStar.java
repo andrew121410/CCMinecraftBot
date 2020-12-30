@@ -47,7 +47,7 @@ public class AStar {
         uncheckedNodes.add(startNode);
 
         // cycle through untested nodes until a exit condition is fulfilled
-        while (checkedNodes.size() < maxNodeTests && pathFound == false && uncheckedNodes.size() > 0) {
+        while (checkedNodes.size() < maxNodeTests && !pathFound && uncheckedNodes.size() > 0) {
             Node n = uncheckedNodes.get(0);
             for (Node nt : uncheckedNodes)
                 if (nt.getEstimatedFinalExpense() < n.getEstimatedFinalExpense())
@@ -67,7 +67,7 @@ public class AStar {
         // returning if no path has been found
         if (!pathFound) {
             float duration = (System.nanoTime() - nsStart) / 1000000f;
-            System.out.println("A* could not find path.");
+            System.out.println("A* could not find path. Ms" + duration);
             return new Location[0];
         }
 
@@ -208,35 +208,25 @@ public class AStar {
         }
 
         public Node addFallNode(Location loc, double expense) {
-            Node n = new Node(loc, expense, this);
-
-            return n;
+            return new Node(loc, expense, this);
         }
     }
 
     public boolean isObstructed(Location loc) {
-//        if (loc.getBlock().getType().isSolid())
-//            return true;
         return false;
     }
 
     public boolean canStandAt(Location loc) {
-        return !(isObstructed(loc) || isObstructed(loc.clone().add(0, 1, 0)) || !isObstructed(loc.clone().add(0, -1, 0)));
+        return true;
     }
 
     public double distanceTo(Location loc1, Location loc2) {
         double deltaX = Math.abs(loc1.getX() - loc2.getX());
         double deltaY = Math.abs(loc1.getY() - loc2.getY());
         double deltaZ = Math.abs(loc1.getZ() - loc2.getZ());
-
         // euclidean distance
         double distance2d = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-        double distance3d = Math.sqrt(distance2d * distance2d + deltaY * deltaY);
-
-        return distance3d;
-
-        // manhattan distance
-        //return deltaX + deltaY + deltaZ;
+        return Math.sqrt(distance2d * distance2d + deltaY * deltaY);
     }
 
     public double round(double d) {

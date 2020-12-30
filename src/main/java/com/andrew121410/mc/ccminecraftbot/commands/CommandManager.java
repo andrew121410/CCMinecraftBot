@@ -1,7 +1,9 @@
 package com.andrew121410.mc.ccminecraftbot.commands;
 
 import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.pathfinding.PathManager;
 import com.andrew121410.mc.ccminecraftbot.player.inventory.InventorySlot;
+import com.andrew121410.mc.ccminecraftbot.world.Location;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import lombok.AllArgsConstructor;
 
@@ -35,6 +37,13 @@ public class CommandManager {
         } else if (command.equalsIgnoreCase("inv_drop_a") && args.length == 1) {
             this.main.getPlayer().getPlayerInventory().dropFullStack(Integer.parseInt(args[0]));
             sendMessage("Dropping full stack in slot: " + args[0]);
+        } else if (command.equalsIgnoreCase("path_go_a") && args.length == 3) {
+            int x = Integer.parseInt(args[0]);
+            int y = Integer.parseInt(args[1]);
+            int z = Integer.parseInt(args[2]);
+            Location locationFromCords = new Location(x, y, z);
+            new PathManager(this.main, this.main.getPlayer()).goToLocation(locationFromCords);
+            sendMessage("Going to path hopefully.");
         } else if (command.equalsIgnoreCase("ping")) {
             sendMessage("Hello I heard you.");
             return;

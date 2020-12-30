@@ -13,6 +13,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlaye
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -40,7 +41,7 @@ public class CCPlayer {
 
     private String[] worldNames;
     private int worldCount;
-    private String dimension;
+    private CompoundTag dimension;
     private String currentWorld;
     private long hashedSeed;
 
@@ -96,12 +97,14 @@ public class CCPlayer {
         this.main.getClient().getSession().send(packet);
     }
 
-    public void tick() {
-        sendPlayerPositionPacket();
-    }
-
     public Location getLocation() {
         return new Location(this.x, this.y, this.z, this.yaw, this.pitch);
+    }
+
+    public void setLocation(Location to) {
+        this.x = to.getX();
+        this.y = to.getY();
+        this.z = to.getZ();
     }
 
     public Direction getDirection() {

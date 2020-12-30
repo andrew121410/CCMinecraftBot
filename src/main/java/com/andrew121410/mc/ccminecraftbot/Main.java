@@ -5,8 +5,8 @@ import com.andrew121410.mc.ccminecraftbot.config.CCMinecraftBotJacksonConfig;
 import com.andrew121410.mc.ccminecraftbot.config.ConfigUtils;
 import com.andrew121410.mc.ccminecraftbot.packets.PacketSessionAdapter;
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
+import com.andrew121410.mc.ccminecraftbot.utils.SimpleScheduler;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
@@ -21,7 +21,6 @@ import java.net.Proxy;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
 
@@ -71,26 +70,14 @@ public class Main {
         commandManager = new CommandManager(this);
 
         client = new Client(config.getServerHost(), config.getServerPort(), protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
         client.getSession().addListener(new PacketSessionAdapter(this));
         client.getSession().connect();
         startMainTick();
     }
 
     public void startMainTick() {
-        AtomicInteger atomicInteger = new AtomicInteger(0);
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
-            atomicInteger.getAndIncrement();
-            if (atomicInteger.get() == 20 && CCPlayer.isReady) {
-                this.getPlayer().tick();
-                atomicInteger.set(0);
-            }
-
-            if (atomicInteger.get() >= 20) {
-                atomicInteger.set(0);
-            }
-        }, 0, 50, TimeUnit.MILLISECONDS); //0.05 seconds
+        this.scheduledExecutorService.scheduleAtFixedRate(SimpleScheduler::onTick, 1, 1, TimeUnit.SECONDS);
     }
 
     private void setupScanner() {

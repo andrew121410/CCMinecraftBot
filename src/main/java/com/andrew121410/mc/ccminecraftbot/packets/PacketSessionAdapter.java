@@ -9,8 +9,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePac
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPlayerListEntryPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.*;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
@@ -47,9 +45,6 @@ public class PacketSessionAdapter extends SessionAdapter {
         if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerKeepAlivePacket || event.getPacket() instanceof ServerUpdateTimePacket) {
             return; //Not needed
         }
-
-        if (!(event.getPacket() instanceof ServerMultiBlockChangePacket || event.getPacket() instanceof ServerChunkDataPacket || event.getPacket() instanceof ServerEntityPositionPacket || event.getPacket() instanceof ServerEntityVelocityPacket || event.getPacket() instanceof ServerPlayerListEntryPacket || event.getPacket() instanceof ServerEntityPositionRotationPacket || event.getPacket() instanceof ServerEntityHeadLookPacket || event.getPacket() instanceof ServerEntityTeleportPacket))
-            System.out.println("RECEIVED: " + event.getPacket().toString());
 
         //Handles the packets.
         if (this.packets.containsKey(event.getPacket().getClass())) {
