@@ -44,6 +44,9 @@ public class CommandManager {
             Location locationFromCords = new Location(x, y, z);
             new PathManager(this.main, this.main.getPlayer()).goToLocation(locationFromCords);
             sendMessage("Going to path hopefully.");
+        } else if (command.equalsIgnoreCase("run_cmd")) {
+            String commandToSend = String.join(" ", args);
+            sendMessage("/" + commandToSend);
         } else if (command.equalsIgnoreCase("ping")) {
             sendMessage("Hello I heard you.");
             return;
