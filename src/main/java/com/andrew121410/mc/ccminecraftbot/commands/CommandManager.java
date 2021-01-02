@@ -38,7 +38,7 @@ public class CommandManager {
         } else if (command.equalsIgnoreCase("inv_find_food_and_eat_it")) {
             this.ccBotMinecraft.getPlayer().getPlayerInventory().findFoodAndEatIt();
             sendMessage("Trying.");
-        } else if (command.equalsIgnoreCase("inv_drop_a") && args.length == 1) {
+        } else if (command.equalsIgnoreCase("inv_drop_all") && args.length == 1) {
             this.ccBotMinecraft.getPlayer().getPlayerInventory().dropFullStack(Integer.parseInt(args[0]));
             sendMessage("Dropping full stack in slot: " + args[0]);
         } else if (command.equalsIgnoreCase("path_go_a") && args.length == 3) {
@@ -51,6 +51,9 @@ public class CommandManager {
         } else if (command.equalsIgnoreCase("run_cmd")) {
             String commandToSend = String.join(" ", args);
             sendMessage("/" + commandToSend);
+        } else if (command.equalsIgnoreCase("quit")) {
+            sendMessage("Quitting");
+            this.ccBotMinecraft.quit();
         } else if (command.equalsIgnoreCase("ping")) {
             sendMessage("Hello I heard you.");
             return;
