@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.world;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -41,7 +41,7 @@ public class Location {
     }
 
     public Integer getBlock() {
-        return Main.getInstance().getPlayer().getChunkCache().getBlockAt(toPosition());
+        return CCBotMinecraft.getInstance().getPlayer().getChunkCache().getBlockAt(toPosition());
     }
 
     public Position toPosition() {

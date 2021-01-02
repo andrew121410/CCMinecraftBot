@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.packets;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.*;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.*;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnLoginSuccessPacket;
@@ -32,10 +32,10 @@ public class PacketSessionAdapter extends SessionAdapter {
 
     private Map<Class<? extends Packet>, PacketHandler<? extends Packet>> packets;
 
-    private Main main;
+    private CCBotMinecraft CCBotMinecraft;
 
-    public PacketSessionAdapter(Main main) {
-        this.main = main;
+    public PacketSessionAdapter(CCBotMinecraft CCBotMinecraft) {
+        this.CCBotMinecraft = CCBotMinecraft;
         this.packets = new HashMap<>();
         this.registerPackets();
     }
@@ -44,6 +44,10 @@ public class PacketSessionAdapter extends SessionAdapter {
     public void packetReceived(PacketReceivedEvent event) {
         if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerKeepAlivePacket || event.getPacket() instanceof ServerUpdateTimePacket) {
             return; //Not needed
+        }
+
+        if (event.getPacket() instanceof ServerChatPacket) {
+            System.out.println("CHAT PACKET: " + event.getPacket().toString());
         }
 
         //Handles the packets.
@@ -89,11 +93,11 @@ public class PacketSessionAdapter extends SessionAdapter {
             return;
         }
 
-        if (!this.main.isShuttingDown()) {
+        if (!this.CCBotMinecraft.isShuttingDown()) {
             final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
             executorService.scheduleAtFixedRate(() -> {
                 System.out.println("Trying to reconnect.");
-                main.setupMinecraftBot();
+                CCBotMinecraft.setupMinecraftBot();
                 executorService.shutdown();
             }, 1, 2, TimeUnit.MINUTES);
         }
@@ -101,24 +105,24 @@ public class PacketSessionAdapter extends SessionAdapter {
 
     private void registerPackets() {
         //Login
-        this.packets.put(LoginSuccessPacket.class, new OnLoginSuccessPacket(this.main));
-        this.packets.put(ServerJoinGamePacket.class, new OnServerJoinGamePacket(this.main));
+        this.packets.put(LoginSuccessPacket.class, new OnLoginSuccessPacket(this.CCBotMinecraft));
+        this.packets.put(ServerJoinGamePacket.class, new OnServerJoinGamePacket(this.CCBotMinecraft));
 
-        this.packets.put(ServerPlayerHealthPacket.class, new OnServerPlayerHealthPacket(this.main));
-        this.packets.put(ServerPlayerPositionRotationPacket.class, new OnServerPlayerPositionRotationPacket(this.main));
-        this.packets.put(ServerChatPacket.class, new OnServerChatPacket(this.main));
+        this.packets.put(ServerPlayerHealthPacket.class, new OnServerPlayerHealthPacket(this.CCBotMinecraft));
+        this.packets.put(ServerPlayerPositionRotationPacket.class, new OnServerPlayerPositionRotationPacket(this.CCBotMinecraft));
+        this.packets.put(ServerChatPacket.class, new OnServerChatPacket(this.CCBotMinecraft));
 
         //Chunks
-        this.packets.put(ServerChunkDataPacket.class, new OnServerChunkDataPacket(this.main));
-        this.packets.put(ServerUnloadChunkPacket.class, new OnServerUnloadChunkPacket(this.main));
-        this.packets.put(ServerBlockChangePacket.class, new OnServerBlockChangePacket(this.main));
-        this.packets.put(ServerMultiBlockChangePacket.class, new OnServerMultiBlockChangePacket(this.main));
+        this.packets.put(ServerChunkDataPacket.class, new OnServerChunkDataPacket(this.CCBotMinecraft));
+        this.packets.put(ServerUnloadChunkPacket.class, new OnServerUnloadChunkPacket(this.CCBotMinecraft));
+        this.packets.put(ServerBlockChangePacket.class, new OnServerBlockChangePacket(this.CCBotMinecraft));
+        this.packets.put(ServerMultiBlockChangePacket.class, new OnServerMultiBlockChangePacket(this.CCBotMinecraft));
 
         //Inv
-        this.packets.put(ServerPlayerChangeHeldItemPacket.class, new OnServerPlayerChangeHeldItemPacket(this.main));
-        this.packets.put(ServerSetSlotPacket.class, new OnServerSetSlotPacket(this.main));
-        this.packets.put(ServerWindowItemsPacket.class, new OnServerWindowItemsPacket(this.main));
-        this.packets.put(ServerConfirmTransactionPacket.class, new OnServerConfirmTransactionPacket(this.main));
-        this.packets.put(ServerCloseWindowPacket.class, new OnServerCloseWindowPacket(this.main));
+        this.packets.put(ServerPlayerChangeHeldItemPacket.class, new OnServerPlayerChangeHeldItemPacket(this.CCBotMinecraft));
+        this.packets.put(ServerSetSlotPacket.class, new OnServerSetSlotPacket(this.CCBotMinecraft));
+        this.packets.put(ServerWindowItemsPacket.class, new OnServerWindowItemsPacket(this.CCBotMinecraft));
+        this.packets.put(ServerConfirmTransactionPacket.class, new OnServerConfirmTransactionPacket(this.CCBotMinecraft));
+        this.packets.put(ServerCloseWindowPacket.class, new OnServerCloseWindowPacket(this.CCBotMinecraft));
     }
 }

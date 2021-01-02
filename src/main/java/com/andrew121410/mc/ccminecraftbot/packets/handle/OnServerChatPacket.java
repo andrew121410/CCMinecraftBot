@@ -1,15 +1,18 @@
 package com.andrew121410.mc.ccminecraftbot.packets.handle;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
-import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.TextComponent;
 
-@AllArgsConstructor
 public class OnServerChatPacket extends PacketHandler<ServerChatPacket> {
 
-    private Main main;
+    private CCBotMinecraft CCBotMinecraft;
+    private String format = ":";
+
+    public OnServerChatPacket(CCBotMinecraft CCBotMinecraft) {
+        this.CCBotMinecraft = CCBotMinecraft;
+    }
 
     @Override
     public void handle(ServerChatPacket packet) {
@@ -18,10 +21,13 @@ public class OnServerChatPacket extends PacketHandler<ServerChatPacket> {
             StringBuilder stringBuilder = new StringBuilder();
             textComponent.children().forEach(message -> stringBuilder.append(((TextComponent) message).content()));
             String complete = stringBuilder.toString();
-            if (!complete.contains("cc")) return;
-            String command = complete.substring(complete.lastIndexOf("cc") + 3);
+            if (!complete.contains("ccbot")) return;
+            String[] args = complete.split(" ");
+            args[0] = args[0].replaceAll(format, "");
+            String sender = args[0];
+            String command = complete.substring(complete.lastIndexOf("ccbot") + 6);
             System.out.println("COMMAND: " + command);
-            this.main.getCommandManager().onChat(command);
+            this.CCBotMinecraft.getCommandManager().onChat(sender, command);
         }
     }
 }

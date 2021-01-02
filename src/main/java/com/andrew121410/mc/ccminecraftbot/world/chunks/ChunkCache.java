@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.world.chunks;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
@@ -18,10 +18,10 @@ public class ChunkCache {
 
     private Map<ChunkPosition, Column> chunks;
 
-    private Main main;
+    private CCBotMinecraft CCBotMinecraft;
 
-    public ChunkCache(Main main) {
-        this.main = main;
+    public ChunkCache(CCBotMinecraft CCBotMinecraft) {
+        this.CCBotMinecraft = CCBotMinecraft;
         this.chunks = new HashMap<>();
     }
 

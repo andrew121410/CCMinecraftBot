@@ -17,15 +17,14 @@ import lombok.Setter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Proxy;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Main {
+public class CCBotMinecraft {
 
     @Getter
-    private static Main instance;
+    private static CCBotMinecraft instance;
 
     @Getter
     private boolean isShuttingDown = false;
@@ -45,13 +44,12 @@ public class Main {
     private CCPlayer player;
 
     private static final ProxyInfo PROXY = null;
-    private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
 
     public static void main(String[] args) {
-        new Main(args);
+        new CCBotMinecraft(args);
     }
 
-    public Main(String[] args) {
+    public CCBotMinecraft(String[] args) {
         instance = this;
         this.config = ConfigUtils.loadConfig();
         setupMinecraftBot();

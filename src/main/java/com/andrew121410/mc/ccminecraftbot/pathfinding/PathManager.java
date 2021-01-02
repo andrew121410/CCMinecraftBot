@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.pathfinding;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
 import com.andrew121410.mc.ccminecraftbot.world.Location;
 import lombok.ToString;
@@ -8,11 +8,11 @@ import lombok.ToString;
 @ToString
 public class PathManager {
 
-    private Main main;
+    private CCBotMinecraft CCBotMinecraft;
     private CCPlayer ccPlayer;
 
-    public PathManager(Main main, CCPlayer ccPlayer) {
-        this.main = main;
+    public PathManager(CCBotMinecraft CCBotMinecraft, CCPlayer ccPlayer) {
+        this.CCBotMinecraft = CCBotMinecraft;
         this.ccPlayer = ccPlayer;
     }
 

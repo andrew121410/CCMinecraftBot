@@ -18,7 +18,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.andrew121410.mc.ccminecraftbot.Main</mainClass>
+                  <mainClass>com.andrew121410.mc.ccminecraftbot.CCBotMinecraft</mainClass>
                 </transformer>
               </transformers>
             </configuration>

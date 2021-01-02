@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.player;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.andrew121410.mc.ccminecraftbot.player.inventory.PlayerInventory;
 import com.andrew121410.mc.ccminecraftbot.world.Direction;
 import com.andrew121410.mc.ccminecraftbot.world.Location;
@@ -25,7 +25,7 @@ public class CCPlayer {
 
     public static boolean isReady = false;
 
-    private Main main;
+    private CCBotMinecraft CCBotMinecraft;
 
     private GameProfile gameProfile;
     private int entityId;
@@ -53,10 +53,10 @@ public class CCPlayer {
 
     private PlayerInventory playerInventory;
 
-    public CCPlayer(Main main, LoginSuccessPacket loginSuccessPacket) {
-        this.main = main;
+    public CCPlayer(CCBotMinecraft CCBotMinecraft, LoginSuccessPacket loginSuccessPacket) {
+        this.CCBotMinecraft = CCBotMinecraft;
         this.gameProfile = loginSuccessPacket.getProfile();
-        this.playerInventory = new PlayerInventory(this.main, this);
+        this.playerInventory = new PlayerInventory(this.CCBotMinecraft, this);
     }
 
     public void handleServerJoinGamePacket(ServerJoinGamePacket serverJoinGamePacket) {
@@ -65,7 +65,7 @@ public class CCPlayer {
         this.previousGameMode = serverJoinGamePacket.getPreviousGamemode();
         this.serverViewDistance = serverJoinGamePacket.getViewDistance();
         this.maxPlayers = serverJoinGamePacket.getMaxPlayers();
-        this.chunkCache = new ChunkCache(this.main);
+        this.chunkCache = new ChunkCache(this.CCBotMinecraft);
         this.worldNames = serverJoinGamePacket.getWorldNames();
         this.worldCount = serverJoinGamePacket.getWorldCount();
         this.dimension = serverJoinGamePacket.getDimension();
@@ -84,17 +84,17 @@ public class CCPlayer {
 
     public void sendPlayerMovementPacket() {
         ClientPlayerMovementPacket packet = new ClientPlayerMovementPacket(true);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
     }
 
     public void sendPlayerPositionPacket() {
         ClientPlayerPositionPacket packet = new ClientPlayerPositionPacket(true, this.x, this.y, this.z);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
     }
 
     public void sendPlayerPositionRotationPacket() {
         ClientPlayerPositionRotationPacket packet = new ClientPlayerPositionRotationPacket(true, this.x, this.y, this.z, this.yaw, this.pitch);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
     }
 
     public Location getLocation() {

@@ -1,6 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.player.inventory;
 
-import com.andrew121410.mc.ccminecraftbot.Main;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
 import com.andrew121410.mc.ccminecraftbot.utils.BlocksAndItems;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
@@ -34,7 +34,7 @@ public class PlayerInventory {
     @Getter
     private Map<Integer, InventorySlot> itemStackMap;
 
-    private Main main;
+    private CCBotMinecraft CCBotMinecraft;
     private CCPlayer ccPlayer;
 
     @Getter
@@ -46,8 +46,8 @@ public class PlayerInventory {
     @Getter
     private int actionId = 0;
 
-    public PlayerInventory(Main main, CCPlayer ccPlayer) {
-        this.main = main;
+    public PlayerInventory(CCBotMinecraft CCBotMinecraft, CCPlayer ccPlayer) {
+        this.CCBotMinecraft = CCBotMinecraft;
         this.ccPlayer = ccPlayer;
         this.itemStackMap = new HashMap<>();
     }
@@ -82,7 +82,7 @@ public class PlayerInventory {
 
     public void moveCursor(int to) {
         ClientPlayerChangeHeldItemPacket packet = new ClientPlayerChangeHeldItemPacket(toSlot(to));
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
         this.heldItemSlot = to;
         if (this.itemStackMap.containsKey(to))
             this.cursor = this.itemStackMap.get(to).getItemStack();
@@ -101,7 +101,7 @@ public class PlayerInventory {
         else fromSlot.setItemStack(this.cursor);
         this.cursor = fromItem;
         ClientMoveItemToHotbarPacket packet = new ClientMoveItemToHotbarPacket(slot);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
         closeWindow(0);
         return InventoryMessage.SUCCESS;
     }
@@ -111,14 +111,14 @@ public class PlayerInventory {
         if (inventorySlot == null) return InventoryMessage.CANT_BECAUSE_NO_ITEM;
         this.actionId++;
         ClientWindowActionPacket packet = new ClientWindowActionPacket(0, this.actionId, inventorySlot.getRawSlot(), inventorySlot.getItemStack(), WindowAction.DROP_ITEM, DropItemParam.DROP_SELECTED_STACK);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
         closeWindow(0);
         return InventoryMessage.SUCCESS;
     }
 
     public void closeWindow(int windowId) {
         ClientCloseWindowPacket packet = new ClientCloseWindowPacket(windowId);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
     }
 
     public InventorySlot findFood() {
@@ -130,7 +130,7 @@ public class PlayerInventory {
         if (inventorySlot == null) return;
         moveSlotToCursor(inventorySlot.getSlot());
         ClientPlayerUseItemPacket packet = new ClientPlayerUseItemPacket(Hand.MAIN_HAND);
-        this.main.getClient().getSession().send(packet);
+        this.CCBotMinecraft.getClient().getSession().send(packet);
     }
 
     public int toSlot(int rawSlot) {
