@@ -62,3 +62,4 @@ public class CommandManager {
         CCBotMinecraft.getInstance().getClient().getSession().send(clientChatPacket);
     }
 }
+//test
