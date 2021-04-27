@@ -2,7 +2,6 @@ package com.andrew121410.mc.ccminecraftbot.player
 
 import com.andrew121410.mc.ccminecraftbot.world.Location
 import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache
-import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkPosition
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionRotationPacket
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerRotationPacket
@@ -23,7 +22,7 @@ const val ROTATE_SPEED = 90.0f // How fast the player should usually rotate (deg
 /**
  * Manages movement of the player attached to [client], uses [chunkCache] as a reference for checking whether a position is valid.
  */
-class MovementManager(private val player: CCPlayer) {
+class MovementManager(player: CCPlayer) {
 
     private var client: Client = player.client
     private var chunkCache: ChunkCache = player.chunkCache
@@ -35,11 +34,6 @@ class MovementManager(private val player: CCPlayer) {
      * The player's current position
      */
     var location: Location = player.currentLocation
-
-    /**
-     * The coordinates of the chunk the player is in
-     */
-    var chunk: ChunkPosition = ChunkPosition(0, 0)
 
     /**
      * Set to true to stop the movement loop
@@ -100,7 +94,7 @@ class MovementManager(private val player: CCPlayer) {
             while (moved <= final) { // Move in small increments until the desired position has been reached
                 if (smallDelta.isZero()) break // Stop the loop if small delta is zero to avoid infinite looping
                 movementQueue.add(smallDelta) // Add the movement to the queue so it will be executed
-                moved = moved.addDelta(smallDelta) // Add the movement to the progress tracker
+                moved = moved.add(smallDelta) // Add the movement to the progress tracker
                 if (moved <= final) delay(100) else break
             }
             onFinish.invoke(this@MovementManager)
@@ -115,7 +109,7 @@ class MovementManager(private val player: CCPlayer) {
     fun jump(height: Double = 1.25, speed: Double = 2.0): Long {
         if (jumping || !onGround()) return 0 // Check that the player is on the ground and not already jumping
         jumping = true // This is set so that gravity does not take effect and so that the player does not "double jump"
-        val time = move(PositionDelta(y = height), speed)
+        val time = move(Location(y = height), speed)
         GlobalScope.launch { // Wait for the player to hit the apex of the jump and then set jumping to false
             delay(time)
             jumping = false
@@ -126,21 +120,21 @@ class MovementManager(private val player: CCPlayer) {
     /**
      * Makes the player go to [position] at [speed] blocks per second
      */
-    fun moveTo(position: Position, speed: Double = WALK_SPEED) =
-        move(PositionDelta.from(this.location, position), speed)
+    fun moveTo(position: Location, speed: Double = WALK_SPEED) =
+        move(position, speed)
 
     /**
      * Makes the player look at [rotation] rotating at [speed] degrees per second
      */
-    fun rotateTo(rotation: Rotation, speed: Float = ROTATE_SPEED) =
-        rotate(RotationDelta.from(this.rotation, rotation), speed)
+    fun rotateTo(rotation: Location, speed: Float = ROTATE_SPEED) =
+        rotate(rotation, speed)
 
     /**
      * Rotates the player by the values given in [delta] at [speed] degrees per second, when done [onFinish] will be invoked
      * @return How long it will take to rotate the player
      */
-    fun rotate(delta: RotationDelta, speed: Float = ROTATE_SPEED, onFinish: MovementManager.() -> Unit = {}): Long {
-        val final = Rotation().apply { addDelta(delta) } // Desired final orientation
+    fun rotate(delta: Location, speed: Float = ROTATE_SPEED, onFinish: MovementManager.() -> Unit = {}): Long {
+        val final = Location().apply { add(delta) } // Desired final orientation
         val time: Float = abs( // Time it will take to rotate
             when {
                 delta.yaw > delta.pitch -> delta.yaw
@@ -148,16 +142,16 @@ class MovementManager(private val player: CCPlayer) {
             }
         ) / abs(speed)
         val smallDelta = // How much to rotate every 100ms
-            RotationDelta(
-                (delta.yaw / (delta.yaw / time)) / 10,
-                (delta.pitch / (delta.pitch / time)) / 10
+            Location(
+                yaw = (delta.yaw / (delta.yaw / time)) / 10,
+                pitch = (delta.pitch / (delta.pitch / time)) / 10
             )
         GlobalScope.launch {
-            var rotated = Rotation() // Create an empty rotation, used to track progress
+            var rotated = Location() // Create an empty rotation, used to track progress
             while (rotated <= final) { // Keep rotating in small increments until the desired orientation has been reached
                 if (smallDelta.isZero()) break // Stop the loop if the delta is 0 to avoid infinite looping
-                rotationQueue.add(smallDelta) // Add the rotation to the queue so that it will be executed
-                rotated = rotated.addDelta(smallDelta) // Add the rotation to the progress tracker
+                movementQueue.add(smallDelta) // Add the rotation to the queue so that it will be executed
+                rotated = rotated.add(smallDelta) // Add the rotation to the progress tracker
                 if (rotated <= final) delay(100) else break
             }
             onFinish.invoke(this@MovementManager)
@@ -170,24 +164,16 @@ class MovementManager(private val player: CCPlayer) {
      */
     private fun performMovement() {
         var currentPosition = location
-        var currentRotation = rotation
-        val rotationDelta = if (rotationQueue.size > 0) {
-            rotationQueue[0]
-            rotationQueue.removeAt(0) // remove it from the queue or it will be repeated indefinitely
-        } else RotationDelta() // Get the next rotation in the queue, if there are none get an empty one
+
         var positionDelta = if (movementQueue.size > 0) {
             movementQueue[0]
             movementQueue.removeAt(0)
-        } else PositionDelta()
-        val newPosition = currentPosition.addDelta(positionDelta) // Get the position this movement would result in
-        val newRotation = currentRotation.addDelta(rotationDelta)
-        if (chunkCache.isSolid(newPosition.blockPos()) || chunkCache.isSolid(
-                newPosition.blockPos().copy(y = newPosition.blockPos().y + 1)
-            )
-        ) positionDelta = PositionDelta() else currentPosition = newPosition
-        currentRotation = newRotation
+        } else Location()
+        val newPosition = currentPosition.add(positionDelta) // Get the position this movement would result in
+        if (chunkCache.isSolid(newPosition.toPosition()) || chunkCache.isSolid(newPosition.copy(y = (newPosition.toPosition().y + 1).toDouble()))
+        ) positionDelta = Location() else currentPosition = newPosition
         when { // Send the new position and or rotation to the server
-            rotationDelta.isZero() -> client.session.send(
+            location.isYawPitchZero() -> client.session.send(
                 ClientPlayerPositionPacket(
                     onGround(),
                     currentPosition.x,
@@ -198,8 +184,8 @@ class MovementManager(private val player: CCPlayer) {
             positionDelta.isZero() -> client.session.send(
                 ClientPlayerRotationPacket(
                     onGround(),
-                    currentRotation.yaw,
-                    currentRotation.pitch
+                    currentPosition.yaw,
+                    currentPosition.pitch
                 )
             )
             else -> client.session.send(
@@ -208,13 +194,12 @@ class MovementManager(private val player: CCPlayer) {
                     currentPosition.x,
                     currentPosition.y,
                     currentPosition.z,
-                    currentRotation.yaw,
-                    currentRotation.pitch
+                    currentPosition.yaw,
+                    currentPosition.pitch
                 )
             )
         }
         location = currentPosition
-        rotation = currentRotation
         println("$location ${SimpleDateFormat("mm:ss").format(Date())}")
     }
 }

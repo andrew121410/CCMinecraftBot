@@ -1,5 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.utils
 
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
 import com.andrew121410.mc.ccminecraftbot.objects.Block
 import com.andrew121410.mc.ccminecraftbot.objects.BoundingBox
 import com.andrew121410.mc.ccminecraftbot.objects.Item
@@ -26,7 +27,7 @@ val AIR_BLOCK = Block(
 )
 
 object ResourceManager {
-    private val classLoader = javaClass.classLoader
+    private val classLoader = this.javaClass.classLoader
     private val mapper = ObjectMapper().registerModule(KotlinModule())
 
     var dataPaths = HashMap<String, HashMap<String, HashMap<String, String>>>()
@@ -35,7 +36,8 @@ object ResourceManager {
     var items = HashMap<Int, Item>()
     var materials = HashMap<String, Material>()
 
-    fun load(){
+    fun load() {
+        CCBotMinecraft.ExportResource("minecraft-data/")
         loadPaths()
         loadBlocks()
         loadItems()

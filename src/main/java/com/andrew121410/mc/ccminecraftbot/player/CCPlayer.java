@@ -25,7 +25,7 @@ public class CCPlayer {
     public static boolean isReady = false;
 
     private CCBotMinecraft CCBotMinecraft;
-    private Client client;
+    public Client client;
 
 
     private GameProfile gameProfile;
@@ -38,7 +38,7 @@ public class CCPlayer {
 
     private int maxPlayers;
 
-    private ChunkCache chunkCache;
+    public ChunkCache chunkCache;
 
     private String[] worldNames;
     private int worldCount;
@@ -47,7 +47,9 @@ public class CCPlayer {
     private long hashedSeed;
 
     private Location spawnPoint;
-    private Location currentLocation;
+    public Location currentLocation;
+
+    public MovementManager movementManager;
 
     private PlayerInventory playerInventory;
 
@@ -56,6 +58,7 @@ public class CCPlayer {
         this.client = CCBotMinecraft.getClient();
         this.gameProfile = loginSuccessPacket.getProfile();
         this.playerInventory = new PlayerInventory(this.CCBotMinecraft, this);
+        this.movementManager = new MovementManager(this);
     }
 
     public void handleServerJoinGamePacket(ServerJoinGamePacket serverJoinGamePacket) {

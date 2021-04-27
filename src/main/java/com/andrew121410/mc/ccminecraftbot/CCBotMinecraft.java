@@ -13,18 +13,16 @@ import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class CCBotMinecraft {
 
-    @Getter
     private static CCBotMinecraft instance;
 
     @Getter
@@ -40,9 +38,7 @@ public class CCBotMinecraft {
     @Getter
     private CommandManager commandManager;
 
-    @Getter
-    @Setter
-    private CCPlayer player;
+    public CCPlayer player;
 
     private static final ProxyInfo PROXY = null;
 
@@ -108,5 +104,27 @@ public class CCBotMinecraft {
         this.scheduledExecutorService.shutdown();
         this.client.getSession().disconnect("OkByes");
         System.exit(1);
+    }
+
+    public static CCBotMinecraft getInstance() {
+        return instance;
+    }
+
+    public CCPlayer getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(CCPlayer player) {
+        this.player = player;
+    }
+
+    public static void ExportResource(String resourceName) {
+        InputStream inputStream = CCBotMinecraft.class.getResourceAsStream(resourceName);
+        if (inputStream == null) throw new NullPointerException("inputStream is null");
+        try {
+            Files.copy(inputStream, new File(resourceName).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

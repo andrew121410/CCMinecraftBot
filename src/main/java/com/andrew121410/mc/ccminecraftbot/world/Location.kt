@@ -2,8 +2,17 @@ package com.andrew121410.mc.ccminecraftbot.world
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position
+import java.lang.reflect.Array.get
+import kotlin.math.abs
 
-data class Location(var x: Double, var y: Double, var z: Double, var yaw: Float = 0f, var pitch: Float = 0f) : Comparable<Location> {
+data class Location(
+    var x: Double = 0.0,
+    var y: Double = 0.0,
+    var z: Double = 0.0,
+    var yaw: Float = 0f,
+    var pitch: Float = 0f
+) :
+    Comparable<Location> {
 
     fun isZero() = x == 0.0 && y == 0.0 && z == 0.0
 
@@ -38,8 +47,7 @@ data class Location(var x: Double, var y: Double, var z: Double, var yaw: Float 
         return this
     }
 
-    val block: Int
-        get() = CCBotMinecraft.getInstance().player.chunkCache.getBlockID(toPosition())
+    val block: Int = CCBotMinecraft.getInstance().player.chunkCache.getBlockID(toPosition())
 
     fun toPosition(): Position {
         return Position(x.toInt(), y.toInt(), z.toInt())
@@ -51,12 +59,23 @@ data class Location(var x: Double, var y: Double, var z: Double, var yaw: Float 
         ) + square(z - to.z)
     }
 
-    override operator fun compareTo(other: Position): Int {
-        val distance = PositionDelta.from(Position(), this)
-        val distanceOther = PositionDelta.from(Position(), other)
+    override operator fun compareTo(other: Location): Int {
+        if (this == other) return 0
+        val array = arrayListOf(abs(x), abs(y), abs(z)).apply {
+            sort()
+            reverse()
+        }
+        val arrayOther = arrayListOf(abs(other.x), abs(other.y), abs(other.z)).apply {
+            sort()
+            reverse()
+        }
         return when {
-            distance > distanceOther -> 1
-            distance < distanceOther -> -1
+            array[0] > arrayOther[0] -> 1
+            array[0] < arrayOther[0] -> -1
+            array[1] > arrayOther[1] -> 1
+            array[1] < arrayOther[1] -> -1
+            array[2] > arrayOther[2] -> 1
+            array[2] < arrayOther[2] -> -1
             else -> 0
         }
     }
@@ -65,12 +84,13 @@ data class Location(var x: Double, var y: Double, var z: Double, var yaw: Float 
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Position
+        other as Location
 
         if (x != other.x) return false
         if (y != other.y) return false
         if (z != other.z) return false
-        if (modifying != other.modifying) return false
+        if (yaw != other.yaw) return false
+        if (pitch != other.pitch) return false
 
         return true
     }
@@ -79,7 +99,8 @@ data class Location(var x: Double, var y: Double, var z: Double, var yaw: Float 
         var result = x.hashCode()
         result = 31 * result + y.hashCode()
         result = 31 * result + z.hashCode()
-        result = 31 * result + modifying.hashCode()
+        result = 31 * result + yaw.hashCode()
+        result = 31 * result + pitch.hashCode()
         return result
     }
 

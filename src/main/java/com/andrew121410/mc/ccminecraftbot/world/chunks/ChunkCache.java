@@ -71,4 +71,8 @@ public class ChunkCache {
     public boolean isSolid(Position position) {
         return getBlock(position).getBoundingBox() == BoundingBox.block;
     }
+
+    public boolean isSolid(Location position) {
+        return getBlock(position).getBoundingBox() == BoundingBox.block;
+    }
 }

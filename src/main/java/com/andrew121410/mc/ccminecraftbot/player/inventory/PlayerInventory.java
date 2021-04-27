@@ -2,7 +2,7 @@ package com.andrew121410.mc.ccminecraftbot.player.inventory;
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
-import com.andrew121410.mc.ccminecraftbot.utils.BlocksAndItems;
+import com.andrew121410.mc.ccminecraftbot.utils.Blocks;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.window.DropItemParam;
@@ -122,7 +122,7 @@ public class PlayerInventory {
     }
 
     public InventorySlot findFood() {
-        return this.itemStackMap.values().stream().filter(inventorySlot -> BlocksAndItems.isFood(inventorySlot.getItemStack().getId())).findFirst().orElse(null);
+        return this.itemStackMap.values().stream().filter(inventorySlot -> Blocks.isFood(inventorySlot.getItemStack().getId())).findFirst().orElse(null);
     }
 
     public void findFoodAndEatIt() {

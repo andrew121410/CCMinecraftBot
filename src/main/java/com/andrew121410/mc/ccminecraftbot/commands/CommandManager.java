@@ -1,7 +1,6 @@
 package com.andrew121410.mc.ccminecraftbot.commands;
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.pathfinding.PathManager;
 import com.andrew121410.mc.ccminecraftbot.player.inventory.InventorySlot;
 import com.andrew121410.mc.ccminecraftbot.world.Location;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
@@ -45,8 +44,8 @@ public class CommandManager {
             int x = Integer.parseInt(args[0]);
             int y = Integer.parseInt(args[1]);
             int z = Integer.parseInt(args[2]);
-            Location locationFromCords = new Location(x, y, z);
-            new PathManager(this.ccBotMinecraft, this.ccBotMinecraft.getPlayer()).goToLocation(locationFromCords);
+            Location location = new Location(x, y, z, 0F, 0F);
+            this.ccBotMinecraft.getPlayer().movementManager.moveTo(location, 4.4);
             sendMessage("Going to path hopefully.");
         } else if (command.equalsIgnoreCase("run_cmd")) {
             String commandToSend = String.join(" ", args);
