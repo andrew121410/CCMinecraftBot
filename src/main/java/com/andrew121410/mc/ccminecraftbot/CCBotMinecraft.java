@@ -5,6 +5,7 @@ import com.andrew121410.mc.ccminecraftbot.config.CCMinecraftBotJacksonConfig;
 import com.andrew121410.mc.ccminecraftbot.config.ConfigUtils;
 import com.andrew121410.mc.ccminecraftbot.packets.PacketSessionAdapter;
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
+import com.andrew121410.mc.ccminecraftbot.utils.ResourceManager;
 import com.andrew121410.mc.ccminecraftbot.utils.SimpleScheduler;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
@@ -57,6 +58,8 @@ public class CCBotMinecraft {
     }
 
     public void setupMinecraftBot() {
+        ResourceManager.INSTANCE.load();
+
         MinecraftProtocol protocol;
         try {
             protocol = new MinecraftProtocol(config.getMinecraftUsername(), config.getMinecraftPassword());

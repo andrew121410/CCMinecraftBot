@@ -5,13 +5,10 @@ import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class OnServerSetSlotPacket extends PacketHandler<ServerSetSlotPacket> {
 
-    private CCBotMinecraft CCBotMinecraft;
-
     @Override
-    public void handle(ServerSetSlotPacket packet) {
-        this.CCBotMinecraft.getPlayer().getPlayerInventory().handleServerSetSlotPacket(packet);
+    public void handle(ServerSetSlotPacket packet, CCBotMinecraft ccBotMinecraft) {
+        ccBotMinecraft.getPlayer().getPlayerInventory().handleServerSetSlotPacket(packet);
     }
 }

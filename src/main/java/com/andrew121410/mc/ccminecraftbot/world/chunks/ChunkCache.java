@@ -1,6 +1,10 @@
 package com.andrew121410.mc.ccminecraftbot.world.chunks;
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
+import com.andrew121410.mc.ccminecraftbot.objects.Block;
+import com.andrew121410.mc.ccminecraftbot.objects.BoundingBox;
+import com.andrew121410.mc.ccminecraftbot.utils.ResourceManager;
+import com.andrew121410.mc.ccminecraftbot.world.Location;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
@@ -42,12 +46,10 @@ public class ChunkCache {
         Column column = chunks.get(chunkPosition);
         Chunk chunk = column.getChunks()[position.getY() >> 4];
         Position blockPosition = chunkPosition.getChunkBlock(position.getX(), position.getY(), position.getZ());
-        if (chunk != null) {
-            chunk.set(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), block);
-        }
+        chunk.set(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ(), block);
     }
 
-    public Integer getBlockAt(Position position) {
+    public Integer getBlockID(Position position) {
         ChunkPosition chunkPosition = new ChunkPosition(position.getX() >> 4, position.getZ() >> 4);
         if (!chunks.containsKey(chunkPosition)) {
             return null;
@@ -55,9 +57,18 @@ public class ChunkCache {
         Column column = chunks.get(chunkPosition);
         Chunk chunk = column.getChunks()[position.getY() >> 4];
         Position blockPosition = chunkPosition.getChunkBlock(position.getX(), position.getY(), position.getZ());
-        if (chunk == null) {
-            return null;
-        }
         return chunk.get(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
+    }
+
+    public Block getBlock(Position position) {
+        return ResourceManager.INSTANCE.getBlocks().get(getBlockID(position));
+    }
+
+    public Block getBlock(Location location) {
+        return ResourceManager.INSTANCE.getBlocks().get(getBlockID(location.toPosition()));
+    }
+
+    public boolean isSolid(Position position) {
+        return getBlock(position).getBoundingBox() == BoundingBox.block;
     }
 }

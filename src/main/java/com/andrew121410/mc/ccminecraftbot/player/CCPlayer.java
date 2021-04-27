@@ -7,18 +7,17 @@ import com.andrew121410.mc.ccminecraftbot.world.Location;
 import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerMovementPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.packetlib.Client;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 public class CCPlayer {
@@ -26,6 +25,8 @@ public class CCPlayer {
     public static boolean isReady = false;
 
     private CCBotMinecraft CCBotMinecraft;
+    private Client client;
+
 
     private GameProfile gameProfile;
     private int entityId;
@@ -45,16 +46,14 @@ public class CCPlayer {
     private String currentWorld;
     private long hashedSeed;
 
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
+    private Location spawnPoint;
+    private Location currentLocation;
 
     private PlayerInventory playerInventory;
 
     public CCPlayer(CCBotMinecraft CCBotMinecraft, LoginSuccessPacket loginSuccessPacket) {
         this.CCBotMinecraft = CCBotMinecraft;
+        this.client = CCBotMinecraft.getClient();
         this.gameProfile = loginSuccessPacket.getProfile();
         this.playerInventory = new PlayerInventory(this.CCBotMinecraft, this);
     }
@@ -73,41 +72,7 @@ public class CCPlayer {
         this.hashedSeed = serverJoinGamePacket.getHashedSeed();
     }
 
-    public void handleServerPlayerPositionRotationPacket(ServerPlayerPositionRotationPacket serverPlayerPositionRotationPacket) {
-        this.x = serverPlayerPositionRotationPacket.getX();
-        this.y = serverPlayerPositionRotationPacket.getY();
-        this.z = serverPlayerPositionRotationPacket.getZ();
-        this.yaw = serverPlayerPositionRotationPacket.getYaw();
-        this.pitch = serverPlayerPositionRotationPacket.getPitch();
-        isReady = true;
-    }
-
-    public void sendPlayerMovementPacket() {
-        ClientPlayerMovementPacket packet = new ClientPlayerMovementPacket(true);
-        this.CCBotMinecraft.getClient().getSession().send(packet);
-    }
-
-    public void sendPlayerPositionPacket() {
-        ClientPlayerPositionPacket packet = new ClientPlayerPositionPacket(true, this.x, this.y, this.z);
-        this.CCBotMinecraft.getClient().getSession().send(packet);
-    }
-
-    public void sendPlayerPositionRotationPacket() {
-        ClientPlayerPositionRotationPacket packet = new ClientPlayerPositionRotationPacket(true, this.x, this.y, this.z, this.yaw, this.pitch);
-        this.CCBotMinecraft.getClient().getSession().send(packet);
-    }
-
-    public Location getLocation() {
-        return new Location(this.x, this.y, this.z, this.yaw, this.pitch);
-    }
-
-    public void setLocation(Location to) {
-        this.x = to.getX();
-        this.y = to.getY();
-        this.z = to.getZ();
-    }
-
     public Direction getDirection() {
-        return Direction.getDirection(getLocation());
+        return Direction.getDirection(this.currentLocation);
     }
 }

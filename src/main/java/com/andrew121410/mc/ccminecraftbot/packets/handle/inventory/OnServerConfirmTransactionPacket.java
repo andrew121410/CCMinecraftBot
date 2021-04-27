@@ -6,16 +6,13 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientConfi
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class OnServerConfirmTransactionPacket extends PacketHandler<ServerConfirmTransactionPacket> {
 
-    private CCBotMinecraft CCBotMinecraft;
-
     @Override
-    public void handle(ServerConfirmTransactionPacket packet) {
+    public void handle(ServerConfirmTransactionPacket packet, CCBotMinecraft ccBotMinecraft) {
         if (!packet.isAccepted()) {
             ClientConfirmTransactionPacket confirmPacket = new ClientConfirmTransactionPacket(packet.getWindowId(), packet.getActionId(), true);
-            CCBotMinecraft.getClient().getSession().send(confirmPacket);
+            ccBotMinecraft.getClient().getSession().send(confirmPacket);
         }
     }
 }

@@ -6,16 +6,13 @@ import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class OnServerMultiBlockChangePacket extends PacketHandler<ServerMultiBlockChangePacket> {
 
-    private CCBotMinecraft CCBotMinecraft;
-
     @Override
-    public void handle(ServerMultiBlockChangePacket packet) {
+    public void handle(ServerMultiBlockChangePacket packet, CCBotMinecraft ccBotMinecraft) {
         BlockChangeRecord[] blockChangeRecords = packet.getRecords();
         for (BlockChangeRecord blockChangeRecord : blockChangeRecords) {
-            this.CCBotMinecraft.getPlayer().getChunkCache().updateBlock(blockChangeRecord.getPosition(), blockChangeRecord.getBlock());
+            ccBotMinecraft.getPlayer().getChunkCache().updateBlock(blockChangeRecord.getPosition(), blockChangeRecord.getBlock());
         }
     }
 }

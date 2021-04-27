@@ -5,13 +5,10 @@ import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class OnServerWindowItemsPacket extends PacketHandler<ServerWindowItemsPacket> {
 
-    private CCBotMinecraft CCBotMinecraft;
-
     @Override
-    public void handle(ServerWindowItemsPacket packet) {
-        this.CCBotMinecraft.getPlayer().getPlayerInventory().handleServerWindowItemsPacket(packet);
+    public void handle(ServerWindowItemsPacket packet, CCBotMinecraft ccBotMinecraft) {
+        ccBotMinecraft.getPlayer().getPlayerInventory().handleServerWindowItemsPacket(packet);
     }
 }
