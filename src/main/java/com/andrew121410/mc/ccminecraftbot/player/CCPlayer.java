@@ -58,7 +58,6 @@ public class CCPlayer {
         this.client = CCBotMinecraft.getClient();
         this.gameProfile = loginSuccessPacket.getProfile();
         this.playerInventory = new PlayerInventory(this.CCBotMinecraft, this);
-        this.movementManager = new MovementManager(this);
     }
 
     public void handleServerJoinGamePacket(ServerJoinGamePacket serverJoinGamePacket) {

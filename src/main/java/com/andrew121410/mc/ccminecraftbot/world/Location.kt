@@ -2,7 +2,6 @@ package com.andrew121410.mc.ccminecraftbot.world
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position
-import java.lang.reflect.Array.get
 import kotlin.math.abs
 
 data class Location(
@@ -47,7 +46,7 @@ data class Location(
         return this
     }
 
-    val block: Int = CCBotMinecraft.getInstance().player.chunkCache.getBlockID(toPosition())
+    val block: Int get() = CCBotMinecraft.getInstance().player.chunkCache.getBlockID(toPosition())
 
     fun toPosition(): Position {
         return Position(x.toInt(), y.toInt(), z.toInt())

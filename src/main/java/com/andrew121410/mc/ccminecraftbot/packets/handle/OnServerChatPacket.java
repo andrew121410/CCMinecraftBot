@@ -13,13 +13,14 @@ public class OnServerChatPacket extends PacketHandler<ServerChatPacket> {
     @Override
     public void handle(ServerChatPacket packet, CCBotMinecraft ccBotMinecraft) {
         CCPlayer ccPlayer = ccBotMinecraft.getPlayer();
-        if (packet.getMessage() instanceof TextComponent && packet.getSenderUuid() != null) {
+        if (packet.getMessage() instanceof TextComponent) {
             TextComponent textComponent = (TextComponent) packet.getMessage();
             StringBuilder stringBuilder = new StringBuilder();
             textComponent.children().forEach(message -> stringBuilder.append(((TextComponent) message).content()));
             String complete = stringBuilder.toString();
             if (!complete.contains("ccbot")) return;
             String[] args = complete.split(" ");
+            if (args.length == 0) return;
             args[0] = args[0].replaceAll(format, "");
             String sender = args[0];
             String command = complete.substring(complete.lastIndexOf("ccbot") + 6);

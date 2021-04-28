@@ -14,7 +14,7 @@ public class CommandManager {
     private CCBotMinecraft ccBotMinecraft;
 
     public void onChat(String sender, String fullCommand) {
-        if (!sender.equalsIgnoreCase("andrew121410")) {
+        if (!sender.equalsIgnoreCase("[Owner]")) {
             sendMessage("Andrew is not that dumb silly lol.");
             return;
         }

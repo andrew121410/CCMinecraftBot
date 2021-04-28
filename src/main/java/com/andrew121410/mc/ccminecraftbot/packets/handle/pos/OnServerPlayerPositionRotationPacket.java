@@ -11,6 +11,12 @@ public class OnServerPlayerPositionRotationPacket extends PacketHandler<ServerPl
     @Override
     public void handle(ServerPlayerPositionRotationPacket packet, CCBotMinecraft ccBotMinecraft) {
         CCPlayer ccPlayer = ccBotMinecraft.getPlayer();
+
+        if (ccPlayer.getCurrentLocation() == null) {
+            System.out.println("ERROR: ServerPlayerPositionRotationPacket -> getCurrentLocation is still null.");
+            return;
+        }
+
         double deltaX = packet.getRelative().contains(PositionElement.X) ? packet.getX() : packet.getX() - ccPlayer.getCurrentLocation().getX();
         double deltaY = packet.getRelative().contains(PositionElement.Y) ? packet.getY() : packet.getY() - ccPlayer.getCurrentLocation().getY();
         double deltaZ = packet.getRelative().contains(PositionElement.Z) ? packet.getZ() : packet.getZ() - ccPlayer.getCurrentLocation().getZ();

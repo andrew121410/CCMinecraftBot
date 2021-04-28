@@ -8,7 +8,10 @@ public class Blocks {
 
     public static boolean isFood(int id) {
         Item item = ResourceManager.INSTANCE.getItems().get(id);
-        if (item == null) return false;
+        if (item == null) {
+            System.out.println("Item is null in Blocks.isFood(Int) -> " + id);
+            return false;
+        }
         switch (item.getDisplayName().toLowerCase(Locale.ROOT)) {
             case "potato":
             case "baked potato":
