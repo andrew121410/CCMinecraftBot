@@ -12,23 +12,24 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 
-val AIR_BLOCK = Block(
-    id = 0,
-    displayName = "Air",
-    name = "air",
-    hardness = 0.0f,
-    stackSize = 0,
-    diggable = true,
-    boundingBox = BoundingBox.empty,
-    material = null,
-    drops = emptyArray(),
-    emitLight = 0,
-    filterLight = 0,
-    transparent = true,
-    resistance = 0
-)
-
 object ResourceManager {
+
+    val AIR_BLOCK = Block(
+        id = 0,
+        displayName = "Air",
+        name = "air",
+        hardness = 0.0f,
+        stackSize = 0,
+        diggable = true,
+        boundingBox = BoundingBox.empty,
+        material = null,
+        drops = emptyArray(),
+        emitLight = 0,
+        filterLight = 0,
+        transparent = true,
+        resistance = 0
+    )
+
     private val mapper = ObjectMapper().registerModule(KotlinModule())
 
     var dataPaths = HashMap<String, HashMap<String, HashMap<String, String>>>()

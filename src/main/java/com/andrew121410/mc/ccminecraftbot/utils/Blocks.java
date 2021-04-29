@@ -8,18 +8,21 @@ public class Blocks {
 
     public static boolean isFood(int id) {
         Item item = ResourceManager.INSTANCE.getItems().get(id);
-        if (item == null) {
-            System.out.println("Item is null in Blocks.isFood(Int) -> " + id);
-            return false;
-        }
-        switch (item.getDisplayName().toLowerCase(Locale.ROOT)) {
-            case "potato":
-            case "baked potato":
-            case "steak":
-            case "cooked chicken":
-            case "cooked porkchop":
-            case "golden apple":
+        if (item == null) return false;
+        String displayName = item.getDisplayName().toLowerCase(Locale.ROOT);
+        switch (displayName) {
             case "enchanted golden apple":
+            case "golden apple":
+            case "golden carrot":
+            case "cooked mutton":
+            case "cooked porkchop":
+            case "cooked salmon":
+            case "steak":
+            case "baked potato":
+            case "bread":
+            case "cooked chicken":
+            case "melon":
+            case "cooked cod":
                 return true;
             default:
                 return false;

@@ -6,7 +6,6 @@ import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.*;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnLoginSuccessPacket;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnServerJoinGamePacket;
 import com.andrew121410.mc.ccminecraftbot.packets.handle.pos.*;
-import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
@@ -50,15 +49,9 @@ public class PacketSessionAdapter extends SessionAdapter {
         if (event.getPacket() instanceof ServerUpdateLightPacket || event.getPacket() instanceof ServerKeepAlivePacket || event.getPacket() instanceof ServerUpdateTimePacket) {
             return; //Not needed
         }
-
-        if (event.getPacket() instanceof ServerChatPacket) {
-            System.out.println("CHAT PACKET: " + event.getPacket().toString());
-        }
-
         //Handles the packets.
         if (this.packets.containsKey(event.getPacket().getClass())) {
             this.packets.get(event.getPacket().getClass()).handle(event.getPacket(), this.CCBotMinecraft);
-            return;
         }
     }
 
@@ -68,10 +61,6 @@ public class PacketSessionAdapter extends SessionAdapter {
 
     @Override
     public void packetSent(PacketSentEvent event) {
-        if (event.getPacket() instanceof ClientKeepAlivePacket) {
-            return; //Just spams the console.
-        }
-        System.out.println("SENT: " + event.getPacket().toString());
     }
 
     @Override

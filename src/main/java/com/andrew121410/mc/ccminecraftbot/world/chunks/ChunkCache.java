@@ -39,10 +39,9 @@ public class ChunkCache {
     }
 
     public void updateBlock(Position position, int block) {
+        if (position == null) return;
         ChunkPosition chunkPosition = new ChunkPosition(position.getX() >> 4, position.getZ() >> 4);
-        if (!chunks.containsKey(chunkPosition)) {
-            return;
-        }
+        if (!chunks.containsKey(chunkPosition)) return;
         Column column = chunks.get(chunkPosition);
         Chunk chunk = column.getChunks()[position.getY() >> 4];
         Position blockPosition = chunkPosition.getChunkBlock(position.getX(), position.getY(), position.getZ());
@@ -50,6 +49,7 @@ public class ChunkCache {
     }
 
     public Integer getBlockID(Position position) {
+        if (position == null) return null;
         ChunkPosition chunkPosition = new ChunkPosition(position.getX() >> 4, position.getZ() >> 4);
         if (!chunks.containsKey(chunkPosition)) {
             return null;
