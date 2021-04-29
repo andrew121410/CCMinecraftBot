@@ -1,14 +1,16 @@
 package com.andrew121410.mc.ccminecraftbot.utils
 
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
 import com.andrew121410.mc.ccminecraftbot.objects.Block
 import com.andrew121410.mc.ccminecraftbot.objects.BoundingBox
 import com.andrew121410.mc.ccminecraftbot.objects.Item
-import com.andrew121410.mc.ccminecraftbot.objects.Material
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.github.steveice10.mc.protocol.MinecraftConstants
-import java.io.File
+import lombok.SneakyThrows
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 
 val AIR_BLOCK = Block(
     id = 0,
@@ -17,56 +19,66 @@ val AIR_BLOCK = Block(
     hardness = 0.0f,
     stackSize = 0,
     diggable = true,
-    BoundingBox.empty,
+    boundingBox = BoundingBox.empty,
     material = null,
     drops = emptyArray(),
     emitLight = 0,
     filterLight = 0,
-    transparent = true
+    transparent = true,
+    resistance = 0
 )
 
 object ResourceManager {
-    private val classLoader = this.javaClass.classLoader
     private val mapper = ObjectMapper().registerModule(KotlinModule())
 
     var dataPaths = HashMap<String, HashMap<String, HashMap<String, String>>>()
 
     var blocks = HashMap<Int, Block>()
     var items = HashMap<Int, Item>()
-    var materials = HashMap<String, Material>()
 
     fun load() {
         loadPaths()
         loadBlocks()
         loadItems()
-        loadMaterials()
     }
 
     fun loadPaths() {
-        val pathFile = File(("minecraft-data/data/dataPaths.json"))
-        dataPaths = mapper.readValue(pathFile.readText())
+        val jsonString = getResourcesInJarAsText("/minecraft-data/data/dataPaths.json")
+        dataPaths = mapper.readValue(jsonString)
     }
 
     fun loadBlocks() {
-        val blocksPath = dataPaths["pc"]?.get(MinecraftConstants.GAME_VERSION)?.get("blocks") ?: return
-        val blocksFile = File(classLoader.getResource("/minecraft-data/data/$blocksPath/blocks.json")?.file ?: return)
-        val blocksArray = mapper.readValue<Array<Block>>(blocksFile.readText())
+        val blocksPath = dataPaths["pc"]?.get("1.16.5")?.get("blocks") ?: return
+        val blocksJson = getResourcesInJarAsText("/minecraft-data/data/$blocksPath/blocks.json")
+        val blocksArray = mapper.readValue<Array<Block>>(blocksJson)
         for (block in blocksArray) blocks[block.id] = block
         if (!blocks.containsKey(0)) blocks[0] = AIR_BLOCK
     }
 
     fun loadItems() {
-        val itemsPath = dataPaths["pc"]?.get("1.16.5")?.get("items")
-            ?: throw NullPointerException("itemsPath is null")
-        val itemsFile = File("minecraft-data/data/$itemsPath/items.json")
-        val itemsArray = mapper.readValue<Array<Item>>(itemsFile.readText())
+        val itemsPath = dataPaths["pc"]?.get("1.16.5")?.get("items") ?: throw NullPointerException("itemsPath is null")
+        val itemsJson = getResourcesInJarAsText("/minecraft-data/data/$itemsPath/items.json")
+        val itemsArray = mapper.readValue<Array<Item>>(itemsJson)
         for (item in itemsArray) items[item.id] = item
     }
 
-    fun loadMaterials() {
-        val materialsPath = dataPaths["pc"]?.get(MinecraftConstants.GAME_VERSION)?.get("materials") ?: return
-        val materialsFile =
-            File(classLoader.getResource("/minecraft-data/data/$materialsPath/materials.json")?.file ?: return)
-        materials = mapper.readValue(materialsFile.readText())
+    @SneakyThrows
+    fun readFromInputStream(inputStream: InputStream): String {
+        val resultStringBuilder = StringBuilder()
+        BufferedReader(InputStreamReader(inputStream)).use { br ->
+            var line: String?
+            while (br.readLine().also { line = it } != null) {
+                resultStringBuilder.append(line).append("\n")
+            }
+        }
+        return resultStringBuilder.toString()
+    }
+
+    @SneakyThrows
+    fun getResourcesInJarAsText(path: String): String {
+        val inputStream =
+            CCBotMinecraft::class.java.getResourceAsStream(path)
+                ?: throw NullPointerException("inputStream was null")
+        return readFromInputStream(inputStream)
     }
 }
