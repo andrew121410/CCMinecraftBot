@@ -1,28 +1,12 @@
-package com.andrew121410.mc.ccminecraftbot.config;
+package com.andrew121410.mc.ccminecraftbot.config
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
-@Getter
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CCMinecraftBotJacksonConfig {
-
-    @JsonProperty("minecraft-username")
-    private String minecraftUsername = "UsernameHere";
-
-    @JsonProperty("minecraft-password")
-    private String minecraftPassword = "PasswordHere";
-
-    @JsonProperty("server-host")
-    private String serverHost = "ServerIpHere";
-
-    @JsonProperty("server-port")
-    private Integer serverPort = 25565;
-}
+data class CCMinecraftBotJacksonConfig(
+    @JsonProperty("minecraft-username") val minecraftUsername: String = "Username",
+    @JsonProperty("minecraft-password") val minecraftPassword: String = "Password",
+    @JsonProperty("server-host") val serverHost: String = "IpForTheServer",
+    @JsonProperty("server-port") val serverPort: String = "25565"
+)

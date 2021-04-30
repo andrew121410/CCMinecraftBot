@@ -1,31 +1,15 @@
-package com.andrew121410.mc.ccminecraftbot.utils;
+package com.andrew121410.mc.ccminecraftbot.utils
 
-import com.andrew121410.mc.ccminecraftbot.objects.Item;
+import com.andrew121410.mc.ccminecraftbot.utils.ResourceManager.items
+import java.util.*
 
-import java.util.Locale;
-
-public class Blocks {
-
-    public static boolean isFood(int id) {
-        Item item = ResourceManager.INSTANCE.getItems().get(id);
-        if (item == null) return false;
-        String displayName = item.getDisplayName().toLowerCase(Locale.ROOT);
-        switch (displayName) {
-            case "enchanted golden apple":
-            case "golden apple":
-            case "golden carrot":
-            case "cooked mutton":
-            case "cooked porkchop":
-            case "cooked salmon":
-            case "steak":
-            case "baked potato":
-            case "bread":
-            case "cooked chicken":
-            case "melon":
-            case "cooked cod":
-                return true;
-            default:
-                return false;
+object Blocks {
+    fun isFood(id: Int): Boolean {
+        val (_, displayName1) = items[id] ?: return false
+        val displayName = displayName1.toLowerCase(Locale.ROOT)
+        return when (displayName) {
+            "enchanted golden apple", "golden apple", "golden carrot", "cooked mutton", "cooked porkchop", "cooked salmon", "steak", "baked potato", "bread", "cooked chicken", "melon", "cooked cod" -> true
+            else -> false
         }
     }
 }

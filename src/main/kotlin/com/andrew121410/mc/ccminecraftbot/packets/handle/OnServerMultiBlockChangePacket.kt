@@ -1,18 +1,14 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle;
+package com.andrew121410.mc.ccminecraftbot.packets.handle
 
-import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
-import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
-import lombok.AllArgsConstructor;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket
 
-public class OnServerMultiBlockChangePacket extends PacketHandler<ServerMultiBlockChangePacket> {
-
-    @Override
-    public void handle(ServerMultiBlockChangePacket packet, CCBotMinecraft ccBotMinecraft) {
-        BlockChangeRecord[] blockChangeRecords = packet.getRecords();
-        for (BlockChangeRecord blockChangeRecord : blockChangeRecords) {
-            ccBotMinecraft.getPlayer().getChunkCache().updateBlock(blockChangeRecord.getPosition(), blockChangeRecord.getBlock());
+class OnServerMultiBlockChangePacket : PacketHandler<ServerMultiBlockChangePacket>() {
+    override fun handle(packet: ServerMultiBlockChangePacket, ccBotMinecraft: CCBotMinecraft) {
+        val blockChangeRecords = packet.records
+        for (blockChangeRecord in blockChangeRecords) {
+            ccBotMinecraft.player!!.chunkCache!!.updateBlock(blockChangeRecord.position, blockChangeRecord.block)
         }
     }
 }

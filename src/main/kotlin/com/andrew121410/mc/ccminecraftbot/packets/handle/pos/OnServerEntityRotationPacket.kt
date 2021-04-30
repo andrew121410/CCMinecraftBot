@@ -1,17 +1,14 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle.pos;
+package com.andrew121410.mc.ccminecraftbot.packets.handle.pos
 
-import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
-import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket
 
-public class OnServerEntityRotationPacket extends PacketHandler<ServerEntityRotationPacket> {
-
-    @Override
-    public void handle(ServerEntityRotationPacket packet, CCBotMinecraft ccBotMinecraft) {
-        CCPlayer ccPlayer = ccBotMinecraft.getPlayer();
-        if (packet.getEntityId() == ccPlayer.getEntityId()) {
-            ccPlayer.getCurrentLocation().add(0, 0, 0, packet.getYaw(), packet.getPitch());
+class OnServerEntityRotationPacket : PacketHandler<ServerEntityRotationPacket>() {
+    override fun handle(packet: ServerEntityRotationPacket, ccBotMinecraft: CCBotMinecraft) {
+        val ccPlayer = ccBotMinecraft.player!!
+        if (packet.entityId == ccPlayer.entityId) {
+            ccPlayer.currentLocation!!.add(0.0, 0.0, 0.0, packet.yaw, packet.pitch)
         }
     }
 }

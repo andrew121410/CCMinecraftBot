@@ -1,21 +1,20 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle.pos;
+package com.andrew121410.mc.ccminecraftbot.packets.handle.pos
 
-import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
-import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket
 
-public class OnServerEntityPositionRotationPacket extends PacketHandler<ServerEntityPositionRotationPacket> {
-    @Override
-    public void handle(ServerEntityPositionRotationPacket packet, CCBotMinecraft ccBotMinecraft) {
-        CCPlayer ccPlayer = ccBotMinecraft.getPlayer();
-        if (packet.getEntityId() == ccPlayer.getEntityId()) {
-            ccPlayer.getCurrentLocation().add(
-                    packet.getMoveX() / (128 * 32),
-                    packet.getMoveX() / (128 * 32),
-                    packet.getMoveX() / (128 * 32),
-                    packet.getYaw(),
-                    packet.getPitch());
+class OnServerEntityPositionRotationPacket : PacketHandler<ServerEntityPositionRotationPacket>() {
+    override fun handle(packet: ServerEntityPositionRotationPacket, ccBotMinecraft: CCBotMinecraft) {
+        val ccPlayer = ccBotMinecraft.player!!
+        if (packet.entityId == ccPlayer.entityId) {
+            ccPlayer.currentLocation!!.add(
+                packet.moveX / (128 * 32),
+                packet.moveX / (128 * 32),
+                packet.moveX / (128 * 32),
+                packet.yaw,
+                packet.pitch
+            )
         }
     }
 }

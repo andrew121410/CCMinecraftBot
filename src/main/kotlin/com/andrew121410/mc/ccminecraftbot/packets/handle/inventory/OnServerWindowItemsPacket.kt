@@ -1,14 +1,11 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle.inventory;
+package com.andrew121410.mc.ccminecraftbot.packets.handle.inventory
 
-import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
-import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
-import lombok.AllArgsConstructor;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket
 
-public class OnServerWindowItemsPacket extends PacketHandler<ServerWindowItemsPacket> {
-
-    @Override
-    public void handle(ServerWindowItemsPacket packet, CCBotMinecraft ccBotMinecraft) {
-        ccBotMinecraft.getPlayer().getPlayerInventory().handleServerWindowItemsPacket(packet);
+class OnServerWindowItemsPacket : PacketHandler<ServerWindowItemsPacket>() {
+    override fun handle(packet: ServerWindowItemsPacket, ccBotMinecraft: CCBotMinecraft) {
+        ccBotMinecraft.player!!.playerInventory.handleServerWindowItemsPacket(packet)
     }
 }

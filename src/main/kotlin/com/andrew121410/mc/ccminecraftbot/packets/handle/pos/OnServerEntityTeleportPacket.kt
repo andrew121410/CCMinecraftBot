@@ -1,17 +1,15 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle.pos;
+package com.andrew121410.mc.ccminecraftbot.packets.handle.pos
 
-import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
-import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
-import com.andrew121410.mc.ccminecraftbot.world.Location;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
+import com.andrew121410.mc.ccminecraftbot.world.Location
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket
 
-public class OnServerEntityTeleportPacket extends PacketHandler<ServerEntityTeleportPacket> {
-    @Override
-    public void handle(ServerEntityTeleportPacket packet, CCBotMinecraft ccBotMinecraft) {
-        CCPlayer ccPlayer = ccBotMinecraft.getPlayer();
-        if (packet.getEntityId() == ccBotMinecraft.getPlayer().getEntityId()) {
-            ccPlayer.setCurrentLocation(new Location(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch()));
+class OnServerEntityTeleportPacket : PacketHandler<ServerEntityTeleportPacket>() {
+    override fun handle(packet: ServerEntityTeleportPacket, ccBotMinecraft: CCBotMinecraft) {
+        val ccPlayer = ccBotMinecraft.player!!
+        if (packet.entityId == ccPlayer.entityId) {
+            ccPlayer.currentLocation = Location(packet.x, packet.y, packet.z, packet.yaw, packet.pitch)
         }
     }
 }

@@ -46,7 +46,7 @@ data class Location(
         return this
     }
 
-    val block: Int get() = CCBotMinecraft.getInstance().player.chunkCache.getBlockID(toPosition())
+    val block: Int? get() = CCBotMinecraft.instance.player!!.chunkCache!!.getBlockID(toPosition())
 
     fun toPosition(): Position {
         return Position(x.toInt(), y.toInt(), z.toInt())

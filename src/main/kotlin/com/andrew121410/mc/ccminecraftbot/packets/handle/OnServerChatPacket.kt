@@ -1,35 +1,35 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle;
+package com.andrew121410.mc.ccminecraftbot.packets.handle
 
-import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft;
-import com.andrew121410.mc.ccminecraftbot.commands.CommandManager;
-import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler;
-import com.andrew121410.mc.ccminecraftbot.player.CCPlayer;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
-import net.kyori.adventure.text.TextComponent;
+import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.commands.CommandManager
+import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import java.util.function.Consumer
 
-public class OnServerChatPacket extends PacketHandler<ServerChatPacket> {
-
-    @Override
-    public void handle(ServerChatPacket packet, CCBotMinecraft ccBotMinecraft) {
-        CCPlayer ccPlayer = ccBotMinecraft.getPlayer();
-        if (packet.getMessage() instanceof TextComponent) {
-            TextComponent textComponent = (TextComponent) packet.getMessage();
-            StringBuilder stringBuilder = new StringBuilder();
-            textComponent.children().forEach(message -> stringBuilder.append(((TextComponent) message).content()));
-            String complete = stringBuilder.toString();
-            if (!complete.contains("ccbot")) return;
-            String[] args = complete.split(" ");
-            args[0] = args[0].replaceAll(":", "");
-            String sender = args[0];
-            String command;
-            try {
-                command = complete.substring(complete.lastIndexOf("ccbot") + 6);
-            } catch (IndexOutOfBoundsException exception) {
-                CommandManager.sendMessage("IndexOutOfBoundsException was thrown. Something went wrong!");
-                return;
+class OnServerChatPacket : PacketHandler<ServerChatPacket>() {
+    override fun handle(packet: ServerChatPacket, ccBotMinecraft: CCBotMinecraft) {
+        val ccPlayer = ccBotMinecraft.player
+        if (packet.message is TextComponent) {
+            val textComponent = packet.message as TextComponent
+            val stringBuilder = StringBuilder()
+            textComponent.children()
+                .forEach(Consumer { message: Component -> stringBuilder.append((message as TextComponent).content()) })
+            val complete = stringBuilder.toString()
+            if (!complete.contains("ccbot")) return
+            val args = complete.split(" ".toRegex()).toTypedArray()
+            args[0] = args[0].replace(":".toRegex(), "")
+            val sender = args[0]
+            val command: String
+            command = try {
+                complete.substring(complete.lastIndexOf("ccbot") + 6)
+            } catch (exception: IndexOutOfBoundsException) {
+                CommandManager.Companion.sendMessage("IndexOutOfBoundsException was thrown. Something went wrong!")
+                return
             }
-            System.out.println("COMMAND: " + command);
-            ccBotMinecraft.getCommandManager().onChat(sender, command);
+            println("COMMAND: $command")
+            ccBotMinecraft.commandManager!!.onChat(sender, command)
         }
     }
 }
