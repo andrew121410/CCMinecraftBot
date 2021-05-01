@@ -11,10 +11,10 @@ class OnServerPlayerHealthPacket : PacketHandler<ServerPlayerHealthPacket>() {
         if (packet.health.toDouble() == 0.0) {
             //Make the bot respawn on it's own.
             val clientRequestPacket = ClientRequestPacket(ClientRequest.RESPAWN)
-            ccBotMinecraft.client!!.session.send(clientRequestPacket)
+            ccBotMinecraft.client.session.send(clientRequestPacket)
             println("Bot has respawn.")
         } else if (packet.food < 20) {
-            ccBotMinecraft.player!!.playerInventory.findFoodAndEatIt()
+            ccBotMinecraft.player.playerInventory.findFoodAndEatIt()
         }
     }
 }

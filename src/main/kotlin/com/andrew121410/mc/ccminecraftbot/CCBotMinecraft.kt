@@ -22,17 +22,14 @@ object CCBotMinecraft {
 
     }
 
-    val instance: CCBotMinecraft = this
-
     var isShuttingDown = false
 
     private val config: CCMinecraftBotJacksonConfig =
         ConfigUtils.loadConfig() ?: throw NullPointerException("Please update the config.yml file")
 
-    var client: Client? = null
-
-    var commandManager: CommandManager? = null
-    var player: CCPlayer? = null
+    lateinit var client: Client
+    lateinit var commandManager: CommandManager
+    lateinit var player: CCPlayer
 
     init {
         setupMinecraftBot()
@@ -49,10 +46,10 @@ object CCBotMinecraft {
             e.printStackTrace()
             exitProcess(1)
         }
-        commandManager = CommandManager(this)
         client = Client(config.serverHost, config.serverPort.toInt(), protocol, TcpSessionFactory(null))
-        client!!.session.addListener(PacketSessionAdapter(this))
-        client!!.session.connect()
+        client.session.addListener(PacketSessionAdapter(this))
+        client.session.connect()
+        commandManager = CommandManager(this)
     }
 
     private fun setupScanner() {
@@ -77,7 +74,7 @@ object CCBotMinecraft {
     fun quit() {
         isShuttingDown = true
         println("Shutting down.")
-        client!!.session.disconnect("OkByes")
+        client.session.disconnect("Shutting down!")
         exitProcess(1)
     }
 }

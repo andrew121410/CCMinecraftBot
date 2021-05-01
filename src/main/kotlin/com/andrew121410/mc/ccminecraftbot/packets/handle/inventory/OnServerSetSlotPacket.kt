@@ -6,6 +6,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSl
 
 class OnServerSetSlotPacket : PacketHandler<ServerSetSlotPacket>() {
     override fun handle(packet: ServerSetSlotPacket, ccBotMinecraft: CCBotMinecraft) {
-        ccBotMinecraft.player!!.playerInventory.handleServerSetSlotPacket(packet)
+        ccBotMinecraft.player.playerInventory.handleServerSetSlotPacket(packet)
     }
 }

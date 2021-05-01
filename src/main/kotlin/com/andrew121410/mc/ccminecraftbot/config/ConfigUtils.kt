@@ -3,11 +3,10 @@ package com.andrew121410.mc.ccminecraftbot.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import lombok.SneakyThrows
 import java.io.File
 
 object ConfigUtils {
-    @SneakyThrows
+    @Throws
     fun loadConfig(): CCMinecraftBotJacksonConfig? {
         val objectMapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
         val configFolder = File("config")

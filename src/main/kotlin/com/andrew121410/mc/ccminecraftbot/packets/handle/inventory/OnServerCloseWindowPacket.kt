@@ -6,6 +6,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerClose
 
 class OnServerCloseWindowPacket : PacketHandler<ServerCloseWindowPacket>() {
     override fun handle(packet: ServerCloseWindowPacket, ccBotMinecraft: CCBotMinecraft) {
-        ccBotMinecraft.player!!.playerInventory.closeWindow(packet.windowId)
+        ccBotMinecraft.player.playerInventory.closeWindow(packet.windowId)
     }
 }

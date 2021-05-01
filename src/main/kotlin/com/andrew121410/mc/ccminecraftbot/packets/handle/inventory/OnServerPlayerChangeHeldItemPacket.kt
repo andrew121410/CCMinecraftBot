@@ -6,6 +6,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.Serv
 
 class OnServerPlayerChangeHeldItemPacket : PacketHandler<ServerPlayerChangeHeldItemPacket>() {
     override fun handle(packet: ServerPlayerChangeHeldItemPacket, ccBotMinecraft: CCBotMinecraft) {
-        ccBotMinecraft.player!!.playerInventory.handleServerPlayerChangeHeldItemPacket(packet)
+        ccBotMinecraft.player.playerInventory.handleServerPlayerChangeHeldItemPacket(packet)
     }
 }

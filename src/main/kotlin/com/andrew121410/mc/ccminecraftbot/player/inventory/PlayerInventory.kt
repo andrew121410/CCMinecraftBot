@@ -16,30 +16,26 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindo
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket
-import lombok.*
 
-@ToString
-@EqualsAndHashCode
+
 class PlayerInventory(private val CCBotMinecraft: CCBotMinecraft, private val ccPlayer: CCPlayer) {
     /**
      * ClientPlayerChangeHeldItemPacket -> Used when you change to another slot for hotbar.
      * ClientMoveItemToHotbarPacket -> Used to switch item from inv;
      */
-    @Getter
-    private val itemStackMap: MutableMap<Int, InventorySlot?>
 
-    @Getter
+    private val itemStackMap: MutableMap<Int, InventorySlot?> = HashMap()
+
     private var heldItemSlot: Int? = null
 
-    @Getter
     private var cursor: InventorySlot? = null
 
-    @Getter
     private var actionId = 0
+
     fun handleServerWindowItemsPacket(packet: ServerWindowItemsPacket) {
         if (packet.windowId == 0) {
             for (i in packet.items.indices) {
-                val itemStack = packet.items[i] ?: continue
+                val itemStack = packet.items[i] ?: continue //Do not remove Elvis Op
                 itemStackMap.remove(i)
                 itemStackMap[i] = InventorySlot(
                     i,
@@ -72,12 +68,12 @@ class PlayerInventory(private val CCBotMinecraft: CCBotMinecraft, private val cc
 
     fun moveCursor(slot: Int) {
         if (!isHotbarSlot(slot)) {
-            CommandManager.Companion.sendMessage("That's not a valid slot.")
+            CommandManager.sendMessage("That's not a valid slot.")
             return
         }
         // The slot which the player has selected (0–8) not (36-44)
         val packet = ClientPlayerChangeHeldItemPacket(toSlot(slot))
-        CCBotMinecraft.client!!.session.send(packet)
+        CCBotMinecraft.client.session.send(packet)
         heldItemSlot = slot
         cursor = itemStackMap.getOrDefault(slot, null)
     }
@@ -96,7 +92,7 @@ class PlayerInventory(private val CCBotMinecraft: CCBotMinecraft, private val cc
             cursor!!.item = item
         }
         val packet = ClientMoveItemToHotbarPacket(fromSlotNumber)
-        CCBotMinecraft.client!!.session.send(packet)
+        CCBotMinecraft.client.session.send(packet)
         closeWindow(0)
         return InventoryMessage.SUCCESS
     }
@@ -112,14 +108,14 @@ class PlayerInventory(private val CCBotMinecraft: CCBotMinecraft, private val cc
             WindowAction.DROP_ITEM,
             DropItemParam.DROP_SELECTED_STACK
         )
-        CCBotMinecraft.client!!.session.send(packet)
+        CCBotMinecraft.client.session.send(packet)
         closeWindow(0)
         return InventoryMessage.SUCCESS
     }
 
     fun closeWindow(windowId: Int) {
         val packet = ClientCloseWindowPacket(windowId)
-        CCBotMinecraft.client!!.session.send(packet)
+        CCBotMinecraft.client.session.send(packet)
     }
 
     fun findFood(): InventorySlot? {
@@ -133,12 +129,12 @@ class PlayerInventory(private val CCBotMinecraft: CCBotMinecraft, private val cc
     fun findFoodAndEatIt() {
         val inventorySlot = findFood()
         if (inventorySlot == null) {
-            CommandManager.Companion.sendMessage("findFoodAndEatIt couldn't find food.")
+            CommandManager.sendMessage("findFoodAndEatIt couldn't find food.")
             return
         }
         moveSlotToCursor(inventorySlot.slot)
         val packet = ClientPlayerUseItemPacket(Hand.MAIN_HAND)
-        CCBotMinecraft.client!!.session.send(packet)
+        CCBotMinecraft.client.session.send(packet)
     }
 
     fun isHotbarSlot(unknownSlot: Int): Boolean {
@@ -168,9 +164,5 @@ class PlayerInventory(private val CCBotMinecraft: CCBotMinecraft, private val cc
             return rawSlot
         }
         return -1214
-    }
-
-    init {
-        itemStackMap = HashMap()
     }
 }

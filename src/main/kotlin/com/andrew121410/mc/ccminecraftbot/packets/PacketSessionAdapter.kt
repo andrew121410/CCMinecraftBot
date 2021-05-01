@@ -5,7 +5,7 @@ import com.andrew121410.mc.ccminecraftbot.packets.handle.*
 import com.andrew121410.mc.ccminecraftbot.packets.handle.inventory.*
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnLoginSuccessPacket
 import com.andrew121410.mc.ccminecraftbot.packets.handle.login.OnServerJoinGamePacket
-import com.andrew121410.mc.ccminecraftbot.packets.handle.pos.*
+import com.andrew121410.mc.ccminecraftbot.packets.handle.position.*
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket
@@ -24,7 +24,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.*
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket
 import com.github.steveice10.packetlib.event.session.*
 import com.github.steveice10.packetlib.packet.Packet
-import lombok.SneakyThrows
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -48,7 +47,7 @@ class PacketSessionAdapter(private val CCBotMinecraft: CCBotMinecraft) : Session
     override fun connected(event: ConnectedEvent) {}
     override fun disconnecting(event: DisconnectingEvent) {}
 
-    @SneakyThrows
+    @Throws
     override fun disconnected(event: DisconnectedEvent) {
         println("Disconnected: " + event.reason)
         if (event.cause != null) {

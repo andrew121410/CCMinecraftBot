@@ -6,6 +6,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockC
 
 class OnServerBlockChangePacket : PacketHandler<ServerBlockChangePacket>() {
     override fun handle(packet: ServerBlockChangePacket, ccBotMinecraft: CCBotMinecraft) {
-        ccBotMinecraft.player!!.chunkCache!!.updateBlock(packet.record.position, packet.record.block)
+        ccBotMinecraft.player.chunkCache.updateBlock(packet.record.position, packet.record.block)
     }
 }

@@ -8,7 +8,7 @@ import java.util.*
 
 class CommandManager(private val ccBotMinecraft: CCBotMinecraft) {
     fun onChat(sender: String, fullCommand: String) {
-        val ccPlayer: CCPlayer = ccBotMinecraft.player!!
+        val ccPlayer: CCPlayer = ccBotMinecraft.player
 
         if (!sender.equals("[Owner]", ignoreCase = true)) {
             sendMessage("Andrew is not that dumb silly lol.")
@@ -59,7 +59,7 @@ class CommandManager(private val ccBotMinecraft: CCBotMinecraft) {
     companion object {
         fun sendMessage(message: String) {
             val clientChatPacket = ClientChatPacket(message)
-            CCBotMinecraft.client!!.session.send(clientChatPacket)
+            CCBotMinecraft.client.session.send(clientChatPacket)
         }
     }
 }

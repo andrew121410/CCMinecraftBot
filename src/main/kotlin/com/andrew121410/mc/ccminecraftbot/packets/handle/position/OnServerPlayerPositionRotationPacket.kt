@@ -1,4 +1,4 @@
-package com.andrew121410.mc.ccminecraftbot.packets.handle.pos
+package com.andrew121410.mc.ccminecraftbot.packets.handle.position
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
 import com.andrew121410.mc.ccminecraftbot.packets.PacketHandler
@@ -8,7 +8,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.Serv
 
 class OnServerPlayerPositionRotationPacket : PacketHandler<ServerPlayerPositionRotationPacket>() {
     override fun handle(packet: ServerPlayerPositionRotationPacket, ccBotMinecraft: CCBotMinecraft) {
-        val ccPlayer = ccBotMinecraft.player!!
+        val ccPlayer = ccBotMinecraft.player
         if (ccPlayer.currentLocation == null) {
             println("ERROR: ServerPlayerPositionRotationPacket -> getCurrentLocation is still null.")
             return
@@ -24,6 +24,6 @@ class OnServerPlayerPositionRotationPacket : PacketHandler<ServerPlayerPositionR
         val deltaPitch =
             if (packet.relative.contains(PositionElement.PITCH)) packet.pitch else packet.pitch - ccPlayer.currentLocation!!.pitch
         ccPlayer.currentLocation!!.add(deltaX, deltaY, deltaZ, deltaYaw, deltaPitch)
-        ccBotMinecraft.client!!.session.send(ClientTeleportConfirmPacket(packet.teleportId))
+        ccBotMinecraft.client.session.send(ClientTeleportConfirmPacket(packet.teleportId))
     }
 }

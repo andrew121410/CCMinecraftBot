@@ -8,7 +8,7 @@ class OnServerMultiBlockChangePacket : PacketHandler<ServerMultiBlockChangePacke
     override fun handle(packet: ServerMultiBlockChangePacket, ccBotMinecraft: CCBotMinecraft) {
         val blockChangeRecords = packet.records
         for (blockChangeRecord in blockChangeRecords) {
-            ccBotMinecraft.player!!.chunkCache!!.updateBlock(blockChangeRecord.position, blockChangeRecord.block)
+            ccBotMinecraft.player.chunkCache.updateBlock(blockChangeRecord.position, blockChangeRecord.block)
         }
     }
 }

@@ -6,6 +6,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePack
 
 class OnServerJoinGamePacket : PacketHandler<ServerJoinGamePacket>() {
     override fun handle(packet: ServerJoinGamePacket, ccBotMinecraft: CCBotMinecraft) {
-        ccBotMinecraft.player!!.handleServerJoinGamePacket(packet)
+        ccBotMinecraft.player.handleServerJoinGamePacket(packet)
     }
 }

@@ -7,10 +7,10 @@ import com.andrew121410.mc.ccminecraftbot.objects.Item
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import lombok.SneakyThrows
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
+import kotlin.jvm.Throws
 
 object ResourceManager {
 
@@ -63,7 +63,7 @@ object ResourceManager {
         for (item in itemsArray) items[item.id] = item
     }
 
-    @SneakyThrows
+    @Throws
     fun readFromInputStream(inputStream: InputStream): String {
         val resultStringBuilder = StringBuilder()
         BufferedReader(InputStreamReader(inputStream)).use { br ->
@@ -75,7 +75,7 @@ object ResourceManager {
         return resultStringBuilder.toString()
     }
 
-    @SneakyThrows
+    @Throws
     fun getResourcesInJarAsText(path: String): String {
         val inputStream =
             CCBotMinecraft::class.java.getResourceAsStream(path)

@@ -11,37 +11,32 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePack
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag
 import com.github.steveice10.packetlib.Client
-import lombok.*
 
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
 class CCPlayer(private val CCBotMinecraft: CCBotMinecraft, loginSuccessPacket: LoginSuccessPacket) {
-    var client: Client = CCBotMinecraft.client!!
-    private val gameProfile: GameProfile
+    var client: Client = CCBotMinecraft.client
+    private val gameProfile: GameProfile = loginSuccessPacket.profile
     var entityId = 0
-    private var gameMode: GameMode? = null
-    private var previousGameMode: GameMode? = null
-    private var serverViewDistance = 0
-    private var maxPlayers = 0
-    var chunkCache: ChunkCache? = null
-    private lateinit var worldNames: Array<String>
-    private var worldCount = 0
-    private var dimension: CompoundTag? = null
-    private var currentWorld: String? = null
-    private var hashedSeed: Long = 0
+    var gameMode: GameMode? = null
+    var previousGameMode: GameMode? = null
+    var serverViewDistance = 0
+    var maxPlayers = 0
+    lateinit var chunkCache: ChunkCache
+    lateinit var worldNames: Array<String>
+    var worldCount = 0
+    var dimension: CompoundTag? = null
+    var currentWorld: String? = null
+    var hashedSeed: Long = 0
     var spawnPoint: Location? = null
     var currentLocation: Location? = null
     var movementManager: MovementManager? = null
-    val playerInventory: PlayerInventory
+    val playerInventory: PlayerInventory = PlayerInventory(CCBotMinecraft, this)
     fun handleServerJoinGamePacket(serverJoinGamePacket: ServerJoinGamePacket) {
         entityId = serverJoinGamePacket.entityId
         gameMode = serverJoinGamePacket.gameMode
         previousGameMode = serverJoinGamePacket.previousGamemode
         serverViewDistance = serverJoinGamePacket.viewDistance
         maxPlayers = serverJoinGamePacket.maxPlayers
-        chunkCache = ChunkCache(CCBotMinecraft)
+        chunkCache = ChunkCache()
         worldNames = serverJoinGamePacket.worldNames
         worldCount = serverJoinGamePacket.worldCount
         dimension = serverJoinGamePacket.dimension
@@ -54,10 +49,5 @@ class CCPlayer(private val CCBotMinecraft: CCBotMinecraft, loginSuccessPacket: L
 
     companion object {
         var isReady = false
-    }
-
-    init {
-        gameProfile = loginSuccessPacket.profile
-        playerInventory = PlayerInventory(CCBotMinecraft, this)
     }
 }

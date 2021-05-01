@@ -1,4 +1,4 @@
-package com.andrew121410.mc.ccminecraftbot.objects;
+package com.andrew121410.mc.ccminecraftbot.objects
 
 enum class BoundingBox {
     block,

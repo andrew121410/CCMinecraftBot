@@ -29,7 +29,7 @@ class OnServerChatPacket : PacketHandler<ServerChatPacket>() {
                 return
             }
             println("COMMAND: $command")
-            ccBotMinecraft.commandManager!!.onChat(sender, command)
+            ccBotMinecraft.commandManager.onChat(sender, command)
         }
     }
 }

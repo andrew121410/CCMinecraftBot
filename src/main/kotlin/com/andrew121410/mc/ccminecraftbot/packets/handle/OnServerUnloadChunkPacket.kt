@@ -7,6 +7,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUnload
 
 class OnServerUnloadChunkPacket : PacketHandler<ServerUnloadChunkPacket>() {
     override fun handle(packet: ServerUnloadChunkPacket, ccBotMinecraft: CCBotMinecraft) {
-        ccBotMinecraft.player!!.chunkCache!!.removeChunk(ChunkPosition(packet.x, packet.z))
+        ccBotMinecraft.player.chunkCache.removeChunk(ChunkPosition(packet.x, packet.z))
     }
 }
