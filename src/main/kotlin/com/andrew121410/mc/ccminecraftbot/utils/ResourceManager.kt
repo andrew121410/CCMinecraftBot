@@ -5,12 +5,11 @@ import com.andrew121410.mc.ccminecraftbot.objects.Block
 import com.andrew121410.mc.ccminecraftbot.objects.BoundingBox
 import com.andrew121410.mc.ccminecraftbot.objects.Item
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
-import kotlin.jvm.Throws
 
 object ResourceManager {
 
@@ -27,10 +26,13 @@ object ResourceManager {
         emitLight = 0,
         filterLight = 0,
         transparent = true,
-        resistance = 0
+        resistance = 0,
+        minStateId = 0,
+        maxStateId = 0,
+        defaultState = 0
     )
 
-    private val mapper = ObjectMapper().registerModule(KotlinModule())
+    private val mapper = ObjectMapper().registerKotlinModule()
 
     var dataPaths = HashMap<String, HashMap<String, HashMap<String, String>>>()
 
@@ -61,6 +63,11 @@ object ResourceManager {
         val itemsJson = getResourcesInJarAsText("/minecraft-data/data/$itemsPath/items.json")
         val itemsArray = mapper.readValue<Array<Item>>(itemsJson)
         for (item in itemsArray) items[item.id] = item
+    }
+
+    fun getBlockByStateID(ID: Int): Block {
+        return blocks.entries.filter { it.value.defaultState == ID || (ID in it.value.minStateId..it.value.maxStateId) }
+            .map { it.value }.firstOrNull() ?: AIR_BLOCK
     }
 
     @Throws

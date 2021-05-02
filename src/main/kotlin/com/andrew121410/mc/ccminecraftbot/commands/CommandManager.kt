@@ -1,6 +1,7 @@
 package com.andrew121410.mc.ccminecraftbot.commands
 
 import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
+import com.andrew121410.mc.ccminecraftbot.objects.Block
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer
 import com.andrew121410.mc.ccminecraftbot.world.Location
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket
@@ -44,12 +45,28 @@ class CommandManager(private val ccBotMinecraft: CCBotMinecraft) {
             )
             ccPlayer.movementManager!!.moveTo(location, 4.4)
             sendMessage("Going to path hopefully.")
+        } else if (command.equals("what_block_is_this", ignoreCase = true) && args.size == 3) {
+            val x = args[0].toInt()
+            val y = args[1].toInt()
+            val z = args[2].toInt()
+            val location = Location(
+                x.toDouble(), y.toDouble(), z.toDouble(), 0f, 0f
+            )
+            val block: Block? = ccPlayer.chunkCache.getBlock(location)
+            if (block == null) {
+                sendMessage("The block seems to be null")
+                return
+            }
+            sendMessage("Block : ${block.name}")
+            return
         } else if (command.equals("run_cmd", ignoreCase = true)) {
             val commandToSend = java.lang.String.join(" ", *args)
             sendMessage("/$commandToSend")
+            return
         } else if (command.equals("quit", ignoreCase = true)) {
             sendMessage("Quitting")
             ccBotMinecraft.quit()
+            return
         } else if (command.equals("ping", ignoreCase = true)) {
             sendMessage("Hello I heard you.")
             return

@@ -4,13 +4,13 @@ import com.andrew121410.mc.ccminecraftbot.CCBotMinecraft
 import com.andrew121410.mc.ccminecraftbot.player.inventory.PlayerInventory
 import com.andrew121410.mc.ccminecraftbot.world.Direction
 import com.andrew121410.mc.ccminecraftbot.world.Location
-import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache
 import com.github.steveice10.mc.auth.data.GameProfile
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag
 import com.github.steveice10.packetlib.Client
+import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache
 
 class CCPlayer(private val CCBotMinecraft: CCBotMinecraft, loginSuccessPacket: LoginSuccessPacket) {
     var client: Client = CCBotMinecraft.client

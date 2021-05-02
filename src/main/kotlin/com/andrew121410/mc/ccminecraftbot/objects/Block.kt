@@ -41,8 +41,8 @@ data class Block(
     val displayName: String,
     val name: String,
     val hardness: Float? = null,
-    val minStateId: Int? = null,
-    val maxStateId: Int? = null,
+    val minStateId: Int,
+    val maxStateId: Int,
     val states: Array<State>? = null,
     val drops: Array<Int>,
     val diggable: Boolean,
@@ -53,7 +53,7 @@ data class Block(
     val stackSize: Int,
     val material: String? = null,
     val harvestTools: HashMap<String, Boolean>? = null,
-    val defaultState: Int? = null,
+    val defaultState: Int,
     val resistance: Int? = null
 ) {
     override fun equals(other: Any?): Boolean {
