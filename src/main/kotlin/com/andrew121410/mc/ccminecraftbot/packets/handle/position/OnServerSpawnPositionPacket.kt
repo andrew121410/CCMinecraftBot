@@ -12,5 +12,6 @@ class OnServerSpawnPositionPacket : PacketHandler<ServerSpawnPositionPacket>() {
         ccPlayer.currentLocation = from(packet.position)
         ccPlayer.spawnPoint = from(packet.position)
         ccPlayer.movementManager = MovementManager(ccPlayer)
+        ccPlayer.movementManager!!.onJoin()
     }
 }

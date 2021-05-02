@@ -52,11 +52,7 @@ class CommandManager(private val ccBotMinecraft: CCBotMinecraft) {
             val location = Location(
                 x.toDouble(), y.toDouble(), z.toDouble(), 0f, 0f
             )
-            val block: Block? = ccPlayer.chunkCache.getBlock(location)
-            if (block == null) {
-                sendMessage("The block seems to be null")
-                return
-            }
+            val block: Block = ccPlayer.chunkCache.getBlock(location)
             sendMessage("Block : ${block.name}")
             return
         } else if (command.equals("run_cmd", ignoreCase = true)) {

@@ -25,7 +25,7 @@ const val ROTATE_SPEED = 90.0f // How fast the player should usually rotate (deg
 class MovementManager(player: CCPlayer) {
 
     private var client: Client = player.client
-    private var chunkCache: ChunkCache = player.chunkCache!!
+    private var chunkCache: ChunkCache = player.chunkCache
 
     private val movementQueue = ArrayList<Location>() // Queued movements
     private var jumping = false // Whether or not the player is jumping
@@ -33,7 +33,8 @@ class MovementManager(player: CCPlayer) {
     /**
      * The player's current position
      */
-    var location: Location = player.currentLocation!!
+    var location: Location =
+        player.currentLocation ?: throw NullPointerException("player.currentLocation was null in " + this.javaClass)
 
     /**
      * Set to true to stop the movement loop
