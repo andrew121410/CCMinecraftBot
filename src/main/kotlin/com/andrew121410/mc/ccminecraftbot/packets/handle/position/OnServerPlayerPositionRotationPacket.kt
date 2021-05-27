@@ -24,6 +24,6 @@ class OnServerPlayerPositionRotationPacket : PacketHandler<ServerPlayerPositionR
         val deltaPitch =
             if (packet.relative.contains(PositionElement.PITCH)) packet.pitch else packet.pitch - ccPlayer.currentLocation!!.pitch
         ccPlayer.currentLocation!!.add(deltaX, deltaY, deltaZ, deltaYaw, deltaPitch)
-        ccBotMinecraft.client.session.send(ClientTeleportConfirmPacket(packet.teleportId))
+        ccBotMinecraft.client.send(ClientTeleportConfirmPacket(packet.teleportId))
     }
 }

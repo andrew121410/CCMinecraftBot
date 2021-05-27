@@ -72,7 +72,7 @@ class CommandManager(private val ccBotMinecraft: CCBotMinecraft) {
     companion object {
         fun sendMessage(message: String) {
             val clientChatPacket = ClientChatPacket(message)
-            CCBotMinecraft.client.session.send(clientChatPacket)
+            CCBotMinecraft.client.send(clientChatPacket)
         }
     }
 }

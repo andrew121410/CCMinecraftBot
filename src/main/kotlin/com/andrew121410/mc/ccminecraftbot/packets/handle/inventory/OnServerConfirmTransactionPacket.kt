@@ -9,7 +9,7 @@ class OnServerConfirmTransactionPacket : PacketHandler<ServerConfirmTransactionP
     override fun handle(packet: ServerConfirmTransactionPacket, ccBotMinecraft: CCBotMinecraft) {
         if (!packet.isAccepted) {
             val confirmPacket = ClientConfirmTransactionPacket(packet.windowId, packet.actionId, true)
-            ccBotMinecraft.client.session.send(confirmPacket)
+            ccBotMinecraft.client.send(confirmPacket)
         }
     }
 }

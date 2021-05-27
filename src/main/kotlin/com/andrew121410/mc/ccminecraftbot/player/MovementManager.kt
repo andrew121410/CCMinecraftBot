@@ -5,7 +5,7 @@ import com.andrew121410.mc.ccminecraftbot.world.chunks.ChunkCache
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerPositionRotationPacket
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerRotationPacket
-import com.github.steveice10.packetlib.Client
+import com.github.steveice10.packetlib.tcp.TcpClientSession
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ const val ROTATE_SPEED = 90.0f // How fast the player should usually rotate (deg
  */
 class MovementManager(player: CCPlayer) {
 
-    private var client: Client = player.client
+    private var client: TcpClientSession = player.client
     private var chunkCache: ChunkCache = player.chunkCache
 
     private val movementQueue = ArrayList<Location>() // Queued movements
@@ -174,7 +174,7 @@ class MovementManager(player: CCPlayer) {
         if (chunkCache.isSolid(newPosition.toPosition()) || chunkCache.isSolid(newPosition.copy(y = (newPosition.toPosition().y + 1).toDouble()))
         ) positionDelta = Location() else currentPosition = newPosition
         when { // Send the new position and or rotation to the server
-            location.isYawPitchZero() -> client.session.send(
+            location.isYawPitchZero() -> client.send(
                 ClientPlayerPositionPacket(
                     onGround(),
                     currentPosition.x,
@@ -182,14 +182,14 @@ class MovementManager(player: CCPlayer) {
                     currentPosition.z
                 )
             )
-            positionDelta.isZero() -> client.session.send(
+            positionDelta.isZero() -> client.send(
                 ClientPlayerRotationPacket(
                     onGround(),
                     currentPosition.yaw,
                     currentPosition.pitch
                 )
             )
-            else -> client.session.send(
+            else -> client.send(
                 ClientPlayerPositionRotationPacket(
                     true,
                     currentPosition.x,

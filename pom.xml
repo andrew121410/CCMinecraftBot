@@ -133,7 +133,7 @@
         <dependency>
             <groupId>com.github.Steveice10</groupId>
             <artifactId>MCProtocolLib</artifactId>
-            <version>26201a4</version>
+            <version>6499b21e4e</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

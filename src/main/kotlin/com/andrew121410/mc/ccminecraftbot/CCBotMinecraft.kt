@@ -7,9 +7,9 @@ import com.andrew121410.mc.ccminecraftbot.packets.PacketSessionAdapter
 import com.andrew121410.mc.ccminecraftbot.player.CCPlayer
 import com.andrew121410.mc.ccminecraftbot.utils.ResourceManager.load
 import com.github.steveice10.mc.auth.exception.request.RequestException
+import com.github.steveice10.mc.auth.service.AuthenticationService
 import com.github.steveice10.mc.protocol.MinecraftProtocol
-import com.github.steveice10.packetlib.Client
-import com.github.steveice10.packetlib.tcp.TcpSessionFactory
+import com.github.steveice10.packetlib.tcp.TcpClientSession
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -27,7 +27,7 @@ object CCBotMinecraft {
     private val config: CCMinecraftBotJacksonConfig =
         ConfigUtils.loadConfig() ?: throw NullPointerException("Please update the config.yml file")
 
-    lateinit var client: Client
+    lateinit var client: TcpClientSession
     lateinit var commandManager: CommandManager
     lateinit var player: CCPlayer
 
@@ -40,15 +40,19 @@ object CCBotMinecraft {
         load() //Loads up resources (blocks/items)
         val protocol: MinecraftProtocol
         try {
-            protocol = MinecraftProtocol(config.minecraftUsername, config.minecraftPassword)
+            val authenticationService: AuthenticationService = AuthenticationService()
+            authenticationService.username = config.minecraftUsername
+            authenticationService.password = config.minecraftPassword
+            authenticationService.login()
+            protocol = MinecraftProtocol(authenticationService.selectedProfile, authenticationService.accessToken)
             println("Successfully authenticated user.")
         } catch (e: RequestException) {
             e.printStackTrace()
             exitProcess(1)
         }
-        client = Client(config.serverHost, config.serverPort.toInt(), protocol, TcpSessionFactory(null))
-        client.session.addListener(PacketSessionAdapter(this))
-        client.session.connect()
+        client = TcpClientSession(config.serverHost, config.serverPort.toInt(), protocol)
+        client.addListener(PacketSessionAdapter(this))
+        client.connect()
         commandManager = CommandManager(this)
     }
 
@@ -74,7 +78,7 @@ object CCBotMinecraft {
     fun quit() {
         isShuttingDown = true
         println("Shutting down.")
-        client.session.disconnect("Shutting down!")
+        client.disconnect("Shutting down!")
         exitProcess(1)
     }
 }
